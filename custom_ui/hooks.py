@@ -25,7 +25,7 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/custom_ui/css/custom_ui.css"
+app_include_css = "/assets/custom_ui/css/minimal_desk_v7.css"
 # app_include_js = "/assets/custom_ui/js/custom_ui.js"
 
 # include js, css files in header of web template
@@ -234,6 +234,8 @@ app_license = "mit"
 # auth_hooks = [
 # 	"custom_ui.auth.validate"
 # ]
+
+
 
 # Automatically update python controller files with type annotations for this app.
 # export_python_type_annotations = True

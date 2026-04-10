@@ -1,0 +1,121 @@
+/* Minimal and Intuitive ERP Theme - Ultra Minimalist */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    /* Refined Color Palette */
+    --primary-color: #4f46e5; 
+    --text-color: #1f2937;
+    --text-muted: #6b7280;
+    --bg-color: #ffffff;      /* Pure white for ultra minimal */
+    --border-color: #f1f5f9;  /* Very light borders */
+    --header-bg: #e0e7ff;    /* User requested color */
+    --sidebar-bg: #ffffff;
+    
+    --border-radius: 6px;    /* Sharper but still rounded */
+    --transition-speed: 0.2s;
+}
+
+/* Typography */
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Minimal Header (Navbar) */
+.navbar {
+    background-color: var(--header-bg) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    box-shadow: none !important;
+    height: 56px;
+}
+
+.navbar .navbar-brand {
+    font-weight: 600;
+    color: #4338ca !important; /* Slightly darker indigo for contrast */
+}
+
+/* Ultra-Minimal Sidebar */
+.layout-side-section {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-item-container {
+    padding: 8px 12px;
+    margin: 2px 8px;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed);
+}
+
+.sidebar-item-container:hover {
+    background-color: #f8fafc;
+    color: var(--text-color);
+}
+
+.sidebar-item-container.active {
+    background-color: #f5f3ff;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Clean Cards & Widgets */
+.widget-group, .form-container {
+    background-color: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    padding: 20px !important;
+    box-shadow: none !important; /* Removed shadow for minimal look */
+    margin-bottom: 20px !important;
+}
+
+/* Minimal Buttons */
+.btn {
+    border-radius: 6px !important;
+    font-weight: 500;
+    padding: 6px 12px;
+    box-shadow: none !important;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    background-color: #4338ca !important;
+}
+
+/* Form Controls */
+.form-control {
+    border-radius: 6px !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: #fcfcfd !important;
+    box-shadow: none !important;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color) !important;
+    background-color: #fff !important;
+}
+
+/* Hide clutter */
+.indicator-pill {
+    border-radius: 4px !important;
+    font-size: 11px;
+}
+
+/* Table Cleanliness */
+.grid-row {
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.grid-heading-row {
+    background-color: transparent !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    font-weight: 500 !important;
+    color: var(--text-muted);
+}

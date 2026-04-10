@@ -1,0 +1,268 @@
+/* Highly Detailed Calm Teal Theme - Next-Gen UI */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Precision Theme: "Calm & Accessible Teal" */
+    --pro-primary: #006269;
+    --pro-primary-hover: #203535;
+    --pro-accent: #0099A3;
+    --pro-accent-light: #C8E7E9;
+    --pro-bg: #F4F7FB;
+    --pro-surface: #DBE9EE;
+    --pro-border: #C8E7E9;
+    --pro-border-soft: #DBE9EE;
+    --pro-text-main: #203535;
+    --pro-text-muted: #344E4E;
+
+    /* Detailed Shadows & Elevations (Tinted to #006269 RGB 0, 98, 105) */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-premium: 0 10px 25px -5px rgba(0, 98, 105, 0.08), 0 8px 10px -6px rgba(0, 98, 105, 0.04);
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+}
+
+/* Base Body Application */
+body,
+.desk-page {
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    background-color: var(--pro-bg) !important;
+    color: var(--pro-text-main) !important;
+    letter-spacing: -0.01em;
+}
+
+/* Edge-to-Edge Full Width Responsive DOM Injection */
+.container, .page-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.row.layout-main {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.col-lg-2.layout-side-section {
+    padding-left: 0 !important;
+}
+
+.desk-sidebar {
+    padding-left: 12px !important;
+}
+
+.col.layout-main-section-wrapper {
+    padding-left: 12px !important;
+    padding-right: 30px !important;
+}
+
+/* Premium Navbar - Frosted Professional */
+.navbar,
+body[data-route="desk"] .navbar {
+    background: #203535 !important;
+    /* #DBE9EE base */
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(0, 98, 105, 0.15) !important;
+    box-shadow: var(--shadow-sm) !important;
+    height: 64px !important;
+    padding: 0 20px !important;
+}
+
+/* Detailed Brand Typography */
+.navbar .navbar-brand {
+    font-weight: 700 !important;
+    color: var(--pro-primary) !important;
+    letter-spacing: -0.03em !important;
+    font-size: 20px !important;
+}
+
+.navbar .nav-link,
+.navbar-search {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    transition: color 0.2s ease;
+}
+
+.navbar .nav-link:hover {
+    color: var(--pro-accent) !important;
+}
+
+/* Detailed Desk Sidebar */
+.layout-side-section {
+    position: sticky !important;
+    top: 60px !important;
+    height: calc(100vh - 60px) !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+    clip-path: none !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #DBE9EE 100%) !important;
+    background-attachment: local !important;
+    border-right: 1px solid #C8E7E9 !important;
+    box-shadow: 12px 0 25px -4px rgba(0, 98, 105, 0.25) !important;
+    padding-top: 20px !important;
+    margin-left: 0 !important;
+}
+
+.sidebar-item-container {
+    margin: 4px 16px !important;
+    padding: 2px 0 !important;
+    border-radius: var(--radius-md) !important;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    border: 1px solid transparent !important;
+}
+
+.sidebar-item-container:hover {
+    background-color: #FFFFFF !important;
+    border: 1px solid var(--pro-border) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 98, 105, 0.05) !important;
+    transform: translateX(4px) scale(1.02);
+}
+
+.sidebar-item-container.active {
+    background: linear-gradient(135deg, var(--pro-primary) 0%, var(--pro-accent) 100%) !important;
+    color: white !important;
+    border: 1px solid var(--pro-primary-hover) !important;
+    box-shadow: 0 6px 12px -2px rgba(0, 153, 163, 0.35) !important;
+    transform: scale(1.02);
+}
+
+.sidebar-item-container.active * {
+    color: white !important;
+}
+
+/* Premium Dashboard Widgets & Cards */
+.widget-group,
+.form-container,
+.dashboard-widget-box,
+.shortcut-widget-box,
+.links-widget-box,
+.onboarding-widget-box,
+.grid-row-open {
+    background: var(--pro-surface) !important;
+    border: 1px solid var(--pro-border) !important;
+    border-top: 3px solid var(--pro-primary) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: 0 8px 16px -4px rgba(0, 98, 105, 0.06), 0 4px 6px -2px rgba(0, 98, 105, 0.03) !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    transition: box-shadow 0.3s ease, transform 0.3s ease !important;
+}
+
+.widget-group:hover,
+.dashboard-widget-box:hover,
+.shortcut-widget-box:hover,
+.links-widget-box:hover,
+.onboarding-widget-box:hover {
+    box-shadow: 0 16px 24px -6px rgba(0, 98, 105, 0.1), 0 8px 10px -4px rgba(0, 98, 105, 0.05) !important;
+    transform: translateY(-3px);
+}
+
+/* Detailed Headers within Cards */
+.widget-title,
+.form-section-heading {
+    font-weight: 600 !important;
+    color: var(--pro-text-main) !important;
+    border-bottom: 2px solid var(--pro-accent-light) !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 16px !important;
+    font-size: 15px !important;
+}
+
+/* Beautiful Data Tables */
+.grid-row {
+    border-bottom: 1px solid var(--pro-border-soft) !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.grid-row:hover {
+    background-color: var(--pro-accent-light) !important;
+}
+
+.grid-heading-row {
+    background-color: var(--pro-bg) !important;
+    border-top: 1px solid var(--pro-border) !important;
+    border-bottom: 1px solid var(--pro-border) !important;
+    font-weight: 600 !important;
+    color: var(--pro-text-muted) !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    padding: 12px 0 !important;
+}
+
+/* Interactive Refined Form Controls */
+.form-control,
+.input-with-feedback {
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--pro-border) !important;
+    background-color: #ffffff !important;
+    padding: 8px 12px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01) !important;
+    color: var(--pro-text-main) !important;
+    font-weight: 500 !important;
+}
+
+.form-control:focus {
+    border-color: var(--pro-accent) !important;
+    box-shadow: 0 0 0 4px rgba(0, 153, 163, 0.15) !important;
+    outline: none !important;
+}
+
+/* Crisp Action Buttons */
+.btn {
+    border-radius: var(--radius-sm) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em !important;
+    transition: all 0.2s ease !important;
+    padding: 8px 16px !important;
+    text-transform: none !important;
+}
+
+.btn-primary {
+    background-color: var(--pro-primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 98, 105, 0.2) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--pro-primary-hover) !important;
+    box-shadow: 0 6px 12px -2px rgba(0, 98, 105, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
+.btn-default {
+    background-color: white !important;
+    border: 1px solid var(--pro-border) !important;
+    color: var(--pro-text-main) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.btn-default:hover {
+    background-color: var(--pro-bg) !important;
+    border-color: var(--pro-accent) !important;
+}
+
+/* Refined Indicator Pills */
+.indicator-pill {
+    font-weight: 600 !important;
+    border-radius: 20px !important;
+    padding: 4px 12px !important;
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Page Title Typography */
+.page-title h3 {
+    font-weight: 700 !important;
+    color: var(--pro-text-main) !important;
+    font-size: 24px !important;
+    letter-spacing: -0.03em !important;
+}
