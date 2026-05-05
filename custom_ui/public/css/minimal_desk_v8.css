@@ -73,19 +73,50 @@ body[data-route="desk"] .navbar {
 }
 
 /* Detailed Brand Typography */
-.navbar .navbar-brand {
+.navbar .navbar-brand,
+.navbar .navbar-brand span,
+.navbar-brand.navbar-home {
     font-weight: 700 !important;
-    color: var(--pro-primary) !important;
+    color: #FFFFFF !important;
     letter-spacing: -0.03em !important;
     font-size: 20px !important;
 }
 
-.navbar .nav-link,
-.navbar-search {
+.navbar .nav-link {
     color: #FFFFFF !important;
     font-weight: 500 !important;
     transition: color 0.2s ease;
 }
+
+.navbar-search {
+    background: #FFFFFF !important;
+    border-radius: 8px !important;
+    padding: 2px 12px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 320px !important;
+    margin: 0 15px !important;
+}
+
+.navbar-search input {
+    background: transparent !important;
+    border: none !important;
+    color: #111827 !important;
+    font-size: 14px !important;
+    width: 100% !important;
+    padding-left: 8px !important;
+}
+
+.navbar-search input::placeholder {
+    color: #6B7280 !important;
+}
+
+.navbar-search .search-icon {
+    color: #6B7280 !important;
+    font-size: 14px !important;
+}
+
 
 .navbar .nav-link:hover {
     color: var(--pro-accent) !important;
@@ -190,8 +221,7 @@ body[data-route="desk"] .navbar {
     color: var(--pro-text-muted) !important;
     text-transform: uppercase !important;
     font-size: 11px !important;
-    letter-spacing: 0.06em !important;
-    padding: 12px 0 !important;
+    letter-spacing: 0.08em !important;
 }
 
 /* Interactive Refined Form Controls */
@@ -200,7 +230,6 @@ body[data-route="desk"] .navbar {
     border-radius: var(--radius-sm) !important;
     border: 1px solid var(--pro-border) !important;
     background-color: #ffffff !important;
-    padding: 8px 12px !important;
     transition: all 0.2s ease !important;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01) !important;
     color: var(--pro-text-main) !important;
@@ -261,9 +290,176 @@ body[data-route="desk"] .navbar {
 }
 
 /* Page Title Typography */
-.page-title h3 {
+.page-title h3,
+.navbar-breadcrumb h3,
+.breadcrumb-container h3 {
     font-weight: 700 !important;
-    color: var(--pro-text-main) !important;
+    color: #FFFFFF !important;
     font-size: 24px !important;
     letter-spacing: -0.03em !important;
 }
+
+/* Notification Bell Icon */
+.navbar .notifications-icon,
+.navbar .notifications-icon svg,
+.navbar .notifications-icon .icon,
+.navbar .notifications-icon.text-muted,
+.navbar .notifications-icon .frappe-icon {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+/* Navbar Breadcrumbs (Path Text) - Interchanged Colors */
+#navbar-breadcrumbs li a,
+.navbar-breadcrumbs li a,
+.navbar .breadcrumb a {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    transition: color 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+#navbar-breadcrumbs li a:hover,
+.navbar-breadcrumbs li a:hover,
+.navbar .breadcrumb a:hover {
+    color: var(--pro-accent) !important;
+}
+
+#navbar-breadcrumbs li:last-child a,
+#navbar-breadcrumbs li:last-child span,
+.navbar-breadcrumbs li:last-child span,
+.navbar-breadcrumbs li:last-child a,
+.navbar .breadcrumb li:last-child span,
+.navbar .breadcrumb li:last-child a {
+    color: #A38181 !important; /* Muted reddish tone moved to last item */
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+
+/* =====================================================
+   BREADCRUMB SEPARATOR - EXACT FIX
+   DOM confirmed: <ul id="navbar-breadcrumbs"><li>...</li><li>...</li>
+   Separator is a CSS pseudo-element: li + li::before  (no SVG, no HTML element)
+   Frappe's desk.bundle.css sets color: rgb(82,82,82) on this pseudo-element.
+   We beat it with max specificity using the full selector chain.
+   ===================================================== */
+
+/* Force the breadcrumb list items (and their pseudo-elements) to white */
+ul#navbar-breadcrumbs > li + li::before,
+ul.nav#navbar-breadcrumbs li + li::before,
+.navbar ul#navbar-breadcrumbs li + li::before {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+/* Fallback: force ALL pseudo-elements in the breadcrumb to white */
+ul#navbar-breadcrumbs li::before,
+ul#navbar-breadcrumbs li::after {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+/* Also target breadcrumb SVG separators (some Frappe versions use SVG) */
+ul#navbar-breadcrumbs svg,
+ul#navbar-breadcrumbs .breadcrumb-separator,
+ul#navbar-breadcrumbs .breadcrumb-separator svg,
+ul#navbar-breadcrumbs .breadcrumb-separator svg * {
+    fill: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+    color: #FFFFFF !important;
+    filter: brightness(0) invert(1) !important;
+    opacity: 1 !important;
+}
+
+/* Re-apply the muted color ONLY to the last item text */
+ul#navbar-breadcrumbs li:last-child > a,
+ul#navbar-breadcrumbs li:last-child > span {
+    color: #A38181 !important;
+}
+
+/* Anchor link colors in breadcrumb */
+ul#navbar-breadcrumbs li > a {
+    color: #FFFFFF !important;
+}
+
+
+
+
+
+
+/* Navbar Brand Icon Box */
+.navbar-brand .app-logo,
+.navbar-brand .frappe-icon {
+    background: #111827 !important;
+    padding: 6px !important;
+    border-radius: 6px !important;
+    margin-right: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* Fix Dropdown Clickability & Layering */
+.dropdown-menu {
+    z-index: 20000 !important;
+    pointer-events: auto !important;
+}
+
+.navbar {
+    z-index: 10001 !important;
+    pointer-events: auto !important;
+}
+
+/* User Avatar Refinement */
+.navbar .avatar-frame {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background: #FEF3C7 !important; /* Creamy Yellow */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+.navbar .avatar-frame .standard-image {
+    color: #D97706 !important; /* Golden Brown */
+    font-weight: 700 !important;
+    font-size: 13px !important;
+}
+
+/* Notification Dot */
+.navbar .notifications-icon {
+    position: relative !important;
+}
+
+.navbar .notifications-icon::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    width: 8px !important;
+    height: 8px !important;
+    background: #10B981 !important; /* Green dot seen in screenshot */
+    border-radius: 50% !important;
+    border: 2px solid #203535 !important;
+}
+
+/* Login Page Icon Fixes */
+.for-login .page-card .page-card-body .field-icon, 
+.for-forgot .page-card .page-card-body .field-icon, 
+.for-login-with-email-link .page-card .page-card-body .field-icon, 
+.for-signup .page-card .page-card-body .field-icon, 
+.for-email-login .page-card .page-card-body .field-icon {
+    left: 9px;
+    top: 5px;
+    position: absolute;
+    margin-top: 5px !important;
+    z-index: 2;
+}
+
