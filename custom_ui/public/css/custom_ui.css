@@ -4,15 +4,19 @@
 
 :root {
     /* Refined Color Palette */
-    --primary-color: #4f46e5; 
+    --primary-color: #4f46e5;
     --text-color: #1f2937;
     --text-muted: #6b7280;
-    --bg-color: #ffffff;      /* Pure white for ultra minimal */
-    --border-color: #f1f5f9;  /* Very light borders */
-    --header-bg: #e0e7ff;    /* User requested color */
+    --bg-color: #ffffff;
+    /* Pure white for ultra minimal */
+    --border-color: #f1f5f9;
+    /* Very light borders */
+    --header-bg: #e0e7ff;
+    /* User requested color */
     --sidebar-bg: #ffffff;
-    
-    --border-radius: 6px;    /* Sharper but still rounded */
+
+    --border-radius: 6px;
+    /* Sharper but still rounded */
     --transition-speed: 0.2s;
 }
 
@@ -30,11 +34,20 @@ body {
     border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
     box-shadow: none !important;
     height: 56px;
+    z-index: 10001 !important;
+    position: fixed !important;
+    top: 0 !important;
+    width: 100% !important;
+}
+
+.dropdown-menu {
+    z-index: 10002 !important;
 }
 
 .navbar .navbar-brand {
     font-weight: 600;
-    color: #4338ca !important; /* Slightly darker indigo for contrast */
+    color: #4338ca !important;
+    /* Slightly darker indigo for contrast */
 }
 
 /* Ultra-Minimal Sidebar */
@@ -62,12 +75,14 @@ body {
 }
 
 /* Clean Cards & Widgets */
-.widget-group, .form-container {
+.widget-group,
+.form-container {
     background-color: #ffffff !important;
     border: 1px solid var(--border-color) !important;
     border-radius: var(--border-radius) !important;
     padding: 20px !important;
-    box-shadow: none !important; /* Removed shadow for minimal look */
+    box-shadow: none !important;
+    /* Removed shadow for minimal look */
     margin-bottom: 20px !important;
 }
 
@@ -90,11 +105,13 @@ body {
 }
 
 /* Form Controls */
-.form-control {
+.form-control,
+.input-with-feedback {
     border-radius: 6px !important;
     border: 1px solid var(--border-color) !important;
     background-color: #fcfcfd !important;
     box-shadow: none !important;
+    height: 37px !important;
 }
 
 .form-control:focus {
