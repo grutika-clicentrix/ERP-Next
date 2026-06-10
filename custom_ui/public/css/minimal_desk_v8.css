@@ -22,6 +22,14 @@
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
+
+    /* ─── CRITICAL: tell Frappe our navbar is 64px tall ───────────────────
+       Frappe uses --navbar-height everywhere to position .page-head sticky.
+       If this doesn't match the actual navbar height, the .page-head
+       (which holds Save / Discard buttons) slides under the navbar and
+       becomes invisible / unclickable.
+    ────────────────────────────────────────────────────────────────────── */
+    --navbar-height: 64px;
 }
 
 /* Base Body Application */
@@ -78,6 +86,11 @@ body[data-route="desk"] .navbar {
     height: 64px !important;
     padding: 0 20px !important;
     transition: background 0.4s ease !important;
+    /* Fix: must be fixed so the page-head / save-button area isn't displaced */
+    position: fixed !important;
+    top: 0 !important;
+    width: 100% !important;
+    z-index: 10001 !important;
 }
 
 /* Detailed Brand Typography — dynamic text colour */
@@ -421,6 +434,29 @@ ul#navbar-breadcrumbs li > a {
 .navbar {
     z-index: 10001 !important;
     pointer-events: auto !important;
+}
+
+/* =====================================================
+   FIX: Save/Discard buttons always visible on New forms
+   ROOT CAUSE: Frappe positions .page-head sticky using
+   var(--navbar-height) which defaults to 48px. Our navbar
+   is 64px tall, so the page-head (Save/Discard bar) was
+   hidden 16px under the navbar and unreachable.
+   SOLUTION: --navbar-height is now 64px in :root above.
+   These rules are safety guards only.
+   ===================================================== */
+.page-head {
+    /* Let Frappe's own sticky + top: var(--navbar-height) work.
+       Only guarantee it stays above the sidebar (z-index 10). */
+    z-index: 100 !important;
+    background: var(--pro-bg, #FDFCFB) !important;
+}
+
+.page-actions,
+.page-head .page-actions {
+    visibility: visible !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
 }
 
 /* User Avatar Refinement */
