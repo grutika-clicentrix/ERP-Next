@@ -253,3 +253,49 @@ def check_ai_page():
     print("Script prefix (first 250 chars):")
     print(page_data.get("script", "")[:250])
     return True
+
+@frappe.whitelist()
+def execute_seed_expenses():
+    """
+    Triggers the monthly expenses and profitability seeding script
+    """
+    import sys
+    sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
+    import phase_16_expenses
+    phase_16_expenses.execute()
+    return "Expenses seeding completed successfully"
+
+@frappe.whitelist()
+def execute_verify_expenses():
+    """
+    Triggers the verification script for GP and NP ratios
+    """
+    import sys
+    sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
+    import phase_16_expenses
+    phase_16_expenses.verify()
+    return "Expenses verification completed successfully"
+
+@frappe.whitelist()
+def execute_seed_stock_transfers():
+    """
+    Triggers the stock transfers and closing stock seeding script
+    """
+    import sys
+    sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
+    import phase_17_stock_transfers
+    phase_17_stock_transfers.execute()
+    return "Stock transfers seeding completed successfully"
+
+@frappe.whitelist()
+def execute_verify_stock_transfers():
+    """
+    Triggers the verification script for stock transfers and closing stock percentage
+    """
+    import sys
+    sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
+    import phase_17_stock_transfers
+    phase_17_stock_transfers.verify()
+    return "Stock transfers verification completed successfully"
+
+
