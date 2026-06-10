@@ -2,34 +2,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    /* Precision Theme: "Sophisticated Midnight Navy & Gold" */
-    --pro-primary: #1E293B;
-    --pro-primary-hover: #0F172A;
-    --pro-accent: #D97706;
-    --pro-accent-light: #FEF3C7;
-    --pro-bg: #FDFCFB;
-    --pro-surface: #F3F4F6;
-    --pro-border: #E5E7EB;
-    --pro-border-soft: #F3F4F6;
-    --pro-text-main: #0F172A;
-    --pro-text-muted: #4B5563;
+    /* Precision Theme: "Calm & Accessible Teal" */
+    --pro-primary: #006269;
+    --pro-primary-hover: #203535;
+    --pro-accent: #0099A3;
+    --pro-accent-light: #C8E7E9;
+    --pro-bg: #F4F7FB;
+    --pro-surface: #DBE9EE;
+    --pro-border: #C8E7E9;
+    --pro-border-soft: #DBE9EE;
+    --pro-text-main: #203535;
+    --pro-text-muted: #344E4E;
 
-    /* Detailed Shadows & Elevations (Tinted to #1E293B RGB 30, 41, 59) */
+    /* Detailed Shadows & Elevations (Tinted to #006269 RGB 0, 98, 105) */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-premium: 0 10px 25px -5px rgba(30, 41, 59, 0.08), 0 8px 10px -6px rgba(30, 41, 59, 0.04);
+    --shadow-premium: 0 10px 25px -5px rgba(0, 98, 105, 0.08), 0 8px 10px -6px rgba(0, 98, 105, 0.04);
 
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
-
-    /* ─── CRITICAL: tell Frappe our navbar is 64px tall ───────────────────
-       Frappe uses --navbar-height everywhere to position .page-head sticky.
-       If this doesn't match the actual navbar height, the .page-head
-       (which holds Save / Discard buttons) slides under the navbar and
-       becomes invisible / unclickable.
-    ────────────────────────────────────────────────────────────────────── */
-    --navbar-height: 64px;
 }
 
 /* Base Body Application */
@@ -75,22 +67,17 @@ body,
    ===================================================== */
 .navbar,
 body[data-route="desk"] .navbar {
-    background: var(--dynamic-navbar-bg, #1E293B) !important;
+    background: var(--dynamic-navbar-bg, #203535) !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.15) !important;
+    border-bottom: 1px solid rgba(0, 98, 105, 0.15) !important;
     box-shadow: var(--shadow-sm) !important;
     height: 64px !important;
     padding: 0 20px !important;
     transition: background 0.4s ease !important;
-    /* Fix: must be fixed so the page-head / save-button area isn't displaced */
-    position: fixed !important;
-    top: 0 !important;
-    width: 100% !important;
-    z-index: 10001 !important;
 }
 
 /* Detailed Brand Typography — dynamic text colour */
@@ -151,10 +138,10 @@ body[data-route="desk"] .navbar {
     overflow-y: auto !important;
     z-index: 10 !important;
     clip-path: none !important;
-    background: linear-gradient(180deg, #FFFFFF 0%, #E5E7EB 100%) !important;
-    background-attachment: scroll !important;
-    border-right: 1px solid #E5E7EB !important;
-    box-shadow: 12px 0 25px -4px rgba(30, 41, 59, 0.25) !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #DBE9EE 100%) !important;
+    background-attachment: local !important;
+    border-right: 1px solid #C8E7E9 !important;
+    box-shadow: 12px 0 25px -4px rgba(0, 98, 105, 0.25) !important;
     padding-top: 20px !important;
     margin-left: 0 !important;
 }
@@ -170,7 +157,7 @@ body[data-route="desk"] .navbar {
 .sidebar-item-container:hover {
     background-color: #FFFFFF !important;
     border: 1px solid var(--pro-border) !important;
-    box-shadow: 0 4px 6px -1px rgba(30, 41, 59, 0.05) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 98, 105, 0.05) !important;
     transform: translateX(4px) scale(1.02);
 }
 
@@ -178,7 +165,7 @@ body[data-route="desk"] .navbar {
     background: linear-gradient(135deg, var(--pro-primary) 0%, var(--pro-accent) 100%) !important;
     color: white !important;
     border: 1px solid var(--pro-primary-hover) !important;
-    box-shadow: 0 6px 12px -2px rgba(217, 119, 6, 0.35) !important;
+    box-shadow: 0 6px 12px -2px rgba(0, 153, 163, 0.35) !important;
     transform: scale(1.02);
 }
 
@@ -198,7 +185,7 @@ body[data-route="desk"] .navbar {
     border: 1px solid var(--pro-border) !important;
     border-top: 3px solid var(--pro-primary) !important;
     border-radius: var(--radius-lg) !important;
-    box-shadow: 0 8px 16px -4px rgba(30, 41, 59, 0.06), 0 4px 6px -2px rgba(30, 41, 59, 0.03) !important;
+    box-shadow: 0 8px 16px -4px rgba(0, 98, 105, 0.06), 0 4px 6px -2px rgba(0, 98, 105, 0.03) !important;
     padding: 24px !important;
     margin-bottom: 24px !important;
     transition: box-shadow 0.3s ease, transform 0.3s ease !important;
@@ -209,7 +196,7 @@ body[data-route="desk"] .navbar {
 .shortcut-widget-box:hover,
 .links-widget-box:hover,
 .onboarding-widget-box:hover {
-    box-shadow: 0 16px 24px -6px rgba(30, 41, 59, 0.1), 0 8px 10px -4px rgba(30, 41, 59, 0.05) !important;
+    box-shadow: 0 16px 24px -6px rgba(0, 98, 105, 0.1), 0 8px 10px -4px rgba(0, 98, 105, 0.05) !important;
     transform: translateY(-3px);
 }
 
@@ -278,12 +265,12 @@ body[data-route="desk"] .navbar {
     background-color: var(--pro-primary) !important;
     color: #ffffff !important;
     border: none !important;
-    box-shadow: 0 4px 6px -1px rgba(30, 41, 59, 0.2) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 98, 105, 0.2) !important;
 }
 
 .btn-primary:hover {
     background-color: var(--pro-primary-hover) !important;
-    box-shadow: 0 6px 12px -2px rgba(30, 41, 59, 0.3) !important;
+    box-shadow: 0 6px 12px -2px rgba(0, 98, 105, 0.3) !important;
     transform: translateY(-1px) !important;
 }
 
@@ -436,29 +423,6 @@ ul#navbar-breadcrumbs li > a {
     pointer-events: auto !important;
 }
 
-/* =====================================================
-   FIX: Save/Discard buttons always visible on New forms
-   ROOT CAUSE: Frappe positions .page-head sticky using
-   var(--navbar-height) which defaults to 48px. Our navbar
-   is 64px tall, so the page-head (Save/Discard bar) was
-   hidden 16px under the navbar and unreachable.
-   SOLUTION: --navbar-height is now 64px in :root above.
-   These rules are safety guards only.
-   ===================================================== */
-.page-head {
-    /* Let Frappe's own sticky + top: var(--navbar-height) work.
-       Only guarantee it stays above the sidebar (z-index 10). */
-    z-index: 100 !important;
-    background: var(--pro-bg, #FDFCFB) !important;
-}
-
-.page-actions,
-.page-head .page-actions {
-    visibility: visible !important;
-    pointer-events: auto !important;
-    opacity: 1 !important;
-}
-
 /* User Avatar Refinement */
 .navbar .avatar-frame {
     width: 32px !important;
@@ -491,7 +455,7 @@ ul#navbar-breadcrumbs li > a {
     height: 8px !important;
     background: #10B981 !important;
     border-radius: 50% !important;
-    border: 2px solid var(--dynamic-navbar-bg, #1E293B) !important;
+    border: 2px solid var(--dynamic-navbar-bg, #203535) !important;
 }
 
 /* Login Page Icon Fixes */
@@ -535,15 +499,15 @@ ul#navbar-breadcrumbs li > a {
 
 .navbar-theme-card:hover {
     transform: translateY(-4px) scale(1.03);
-    box-shadow: 0 10px 24px -4px rgba(30, 41, 59, 0.20),
-                0 4px 8px -2px rgba(30, 41, 59, 0.10);
-    border-color: var(--pro-accent, #D97706);
+    box-shadow: 0 10px 24px -4px rgba(0, 98, 105, 0.20),
+                0 4px 8px -2px rgba(0, 98, 105, 0.10);
+    border-color: var(--pro-accent, #0099A3);
 }
 
 .navbar-theme-card.selected {
-    border-color: var(--pro-primary, #1E293B);
-    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.25),
-                0 10px 24px -4px rgba(30, 41, 59, 0.22);
+    border-color: var(--pro-primary, #006269);
+    box-shadow: 0 0 0 3px rgba(0, 98, 105, 0.25),
+                0 10px 24px -4px rgba(0, 98, 105, 0.22);
     transform: translateY(-2px) scale(1.02);
 }
 
@@ -577,7 +541,7 @@ ul#navbar-breadcrumbs li > a {
     right: 8px;
     width: 22px;
     height: 22px;
-    background: var(--pro-primary, #1E293B);
+    background: var(--pro-primary, #006269);
     color: #ffffff;
     border-radius: 50%;
     display: flex;
@@ -585,7 +549,7 @@ ul#navbar-breadcrumbs li > a {
     justify-content: center;
     font-size: 12px;
     font-weight: 700;
-    box-shadow: 0 2px 6px rgba(30, 41, 59, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 98, 105, 0.4);
     animation: badge-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -605,7 +569,7 @@ ul#navbar-breadcrumbs li > a {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-top: 1px solid rgba(30, 41, 59, 0.08);
+    border-top: 1px solid rgba(0, 98, 105, 0.08);
     background: #ffffff;
 }
 

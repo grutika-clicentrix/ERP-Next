@@ -299,3 +299,77 @@ def execute_verify_stock_transfers():
     return "Stock transfers verification completed successfully"
 
 
+@frappe.whitelist()
+def list_companies():
+    """
+    Returns list of companies and their abbreviations
+    """
+    companies = frappe.get_all("Company", fields=["name", "abbr"])
+    return companies
+
+
+@frappe.whitelist()
+def find_woodcraft_records():
+    """
+    Finds and counts all records for Wood Craft Furniture Pvt. Ltd. across all DocTypes
+    """
+    import frappe
+    company = "Wood Craft Furniture Pvt. Ltd."
+    results = {}
+    
+    # Get all standard non-child DocTypes
+    all_doctypes = frappe.get_all("DocType", filters={"istable": 0})
+    for d in all_doctypes:
+        dt = d.name
+        try:
+            meta = frappe.get_meta(dt)
+            if meta.has_field("company"):
+                count = frappe.db.count(dt, filters={"company": company})
+                if count > 0:
+                    results[dt] = count
+        except Exception:
+            pass
+            
+    # Special check for tables that might refer to company or have abbr
+    # check for GL Entry and Stock Ledger Entry (they have company field)
+    for dt in ["GL Entry", "Stock Ledger Entry"]:
+        try:
+            count = frappe.db.count(dt, filters={"company": company})
+            if count > 0:
+                results[dt] = count
+        except Exception:
+            pass
+            
+    return results
+
+
+@frappe.whitelist()
+def execute_cleanup_woodcraft():
+    """
+    Triggers the cleanup script for Wood Craft Furniture Pvt. Ltd.
+    """
+    import sys
+    sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
+    import cleanup_woodcraft
+    cleanup_woodcraft.execute()
+    return "Wood Craft cleanup completed successfully"
+
+
+@frappe.whitelist()
+def execute_verify_cleanup_woodcraft():
+    """
+    Triggers the verification script for Wood Craft cleanup
+    """
+    import sys
+    sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
+    import cleanup_woodcraft
+    success = cleanup_woodcraft.verify()
+    if success:
+        return "Wood Craft verification passed: no records remaining"
+    else:
+        return "Wood Craft verification failed: records remaining"
+
+
+
+
+
