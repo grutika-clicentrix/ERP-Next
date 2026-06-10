@@ -210,7 +210,7 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     // recreate welcome area
     var welcome = document.createElement('div');
     welcome.id = 'chat-welcome';
-    welcome.innerHTML = \`
+    welcome.innerHTML = `
       <div class="icon-wrapper">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -226,7 +226,7 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         <div class="suggestion-chip" style="animation-delay: 0.3s" onclick="sendSuggestion(this)">📈 Top 5 customers this month</div>
         <div class="suggestion-chip" style="animation-delay: 0.4s" onclick="sendSuggestion(this)">➕ Create a new Sales Order</div>
       </div>
-    \`;
+    `;
     messagesEl.appendChild(welcome);
     welcomeEl = welcome;
   };
