@@ -11,23 +11,18 @@ $(document).ready(function() {
         let aiNavHtml = `
             <div class="sidebar-item-container" id="ai-sidebar-nav" style="margin-bottom: 8px;">
                 <a href="/app/ai" class="sidebar-item desk-sidebar-item" style="display: flex; align-items: center; gap: 10px; padding: 6px 8px; text-decoration: none;">
-                    <span class="sidebar-item-icon" style="color: #10B981; font-size: 16px; display: flex; align-items: center; justify-content: center; width: 20px;">✦</span>
+                    <span class="sidebar-item-icon" style="color: #0099A3; font-size: 16px; display: flex; align-items: center; justify-content: center; width: 20px;">✦</span>
                     <span class="sidebar-item-label" style="font-weight: 600;">AI Assistant</span>
                 </a>
             </div>
         `;
         
-        // Find the "Modules" section or the first standard section and prepend to it
-        let targetSection = $('.desk-sidebar .standard-sidebar-section').first();
-        if (targetSection.length > 0) {
-            let ul = targetSection.find('.sidebar-items');
-            if (ul.length > 0) {
-                ul.prepend(aiNavHtml);
-            } else {
-                targetSection.prepend(aiNavHtml);
-            }
+        // Try to find the exact container holding the sidebar items (works with Vue in Frappe v14/v15)
+        let firstItem = $('.desk-sidebar .sidebar-item-container').first();
+        if (firstItem.length > 0) {
+            firstItem.before(aiNavHtml);
         } else {
-            // Fallback for custom desk setups
+            // Fallback
             $('.desk-sidebar').prepend(aiNavHtml);
         }
 
@@ -41,13 +36,15 @@ $(document).ready(function() {
         }
     }
 
-    // Run on init with slight delay to ensure sidebar is rendered
-    setTimeout(injectAINav, 1500);
+    // Frappe v14/v15 uses Vue to render the sidebar dynamically. 
+    // It can wipe out jQuery injections when the route changes or data loads.
+    // An interval ensures our custom item is always placed back if missing.
+    setInterval(injectAINav, 1000);
 
-    // Run on route change
+    // Run immediately on route change to prevent flicker
     if (frappe.router) {
         frappe.router.on('change', function() {
-            setTimeout(injectAINav, 300);
+            setTimeout(injectAINav, 50);
             updateActiveState();
         });
     }

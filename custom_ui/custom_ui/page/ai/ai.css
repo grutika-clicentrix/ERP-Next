@@ -458,3 +458,68 @@
   border-radius: 4px; 
 }
 #chat-messages::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* Approval Card Styles */
+.approval-card {
+  background: var(--pro-surface);
+  border: 1px solid var(--pro-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--pro-text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.approval-card-title {
+  font-weight: 600;
+  color: var(--pro-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.approval-card-body pre {
+  background: #FFFFFF;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--pro-border);
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.approval-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.approval-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.approval-btn.approve {
+  background: var(--pro-primary);
+  color: #fff;
+}
+
+.approval-btn.approve:hover {
+  background: var(--pro-primary-hover);
+}
+
+.approval-btn.reject {
+  background: #FFEBEB;
+  color: #DC2626;
+  border: 1px solid #FFCDCD;
+}
+
+.approval-btn.reject:hover {
+  background: #FFD6D6;
+}

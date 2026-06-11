@@ -25,6 +25,9 @@ Rules:
 - Be concise and direct. Users are busy business operators.
 - When showing data, use markdown tables where it helps readability.
 - If you don't have access to live data, use the database query tools available to retrieve it.
+- When you need to fetch complex analytics, totals, or grouped data, FIRST try to use `execute_frappe_report` with standard ERPNext reports (like 'Stock Balance', 'General Ledger', 'Sales Analytics').
+- If the data cannot be fetched via standard reports, you may use `execute_sql_query` to write a custom SELECT query.
+- Never use `execute_sql_query` for data modification.
 - When creating or updating documents, always use the tools provided. Confirm details with the user if necessary.
 - Always respond in the same language the user writes in.
 - Never make up data. If you don't know, say so.
@@ -88,6 +91,30 @@ GEMINI_TOOLS = [
                     },
                     "required": ["doctype", "name", "data"]
                 }
+            },
+            {
+                "name": "execute_frappe_report",
+                "description": "Execute a standard Frappe Report and get the result. Example reports: 'General Ledger', 'Stock Balance', 'Sales Analytics'.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "report_name": {"type": "STRING", "description": "Name of the report (e.g. 'Stock Balance')"},
+                        "filters": {"type": "OBJECT", "description": "Filters for the report as key-value pairs (e.g. {'company': 'Your Company', 'from_date': '2026-01-01'})"}
+                    },
+                    "required": ["report_name"]
+                }
+            },
+            {
+                "name": "execute_sql_query",
+                "description": "Execute a raw SQL SELECT query for custom analytics. MUST ONLY BE A SELECT QUERY.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "query": {"type": "STRING", "description": "The raw SQL SELECT query (e.g. 'SELECT item_code, sum(qty) FROM `tabStock Ledger Entry` GROUP BY item_code')"},
+                        "target_doctype": {"type": "STRING", "description": "The primary DocType being accessed (e.g. 'Sales Order', 'Stock Ledger Entry')"}
+                    },
+                    "required": ["query", "target_doctype"]
+                }
             }
         ]
     }
@@ -128,6 +155,37 @@ def execute_tool(name, args):
             frappe.db.commit()
             return {"output": {"status": "Success", "name": doc.name, "doc": doc.as_dict()}}
 
+        elif name == "execute_frappe_report":
+            report_name = args.get("report_name")
+            filters = args.get("filters") or {}
+            
+            # Auto-map filters for financial statements to avoid mandatory fields errors
+            if report_name in ["Profit and Loss Statement", "Balance Sheet", "Cash Flow Statement"]:
+                if "from_date" in filters and "period_start_date" not in filters:
+                    filters["period_start_date"] = filters.pop("from_date")
+                if "to_date" in filters and "period_end_date" not in filters:
+                    filters["period_end_date"] = filters.pop("to_date")
+                if "filter_based_on" not in filters:
+                    filters["filter_based_on"] = "Date Range"
+                if "periodicity" not in filters:
+                    filters["periodicity"] = "Yearly"
+
+            from frappe.desk.query_report import run
+            res = run(report_name, filters=filters)
+            if isinstance(res, dict):
+                return {"output": {"columns": res.get("columns"), "result": res.get("result")}}
+            elif isinstance(res, tuple) and len(res) >= 2:
+                return {"output": {"columns": res[0], "result": res[1]}}
+            else:
+                return {"output": str(res)}
+
+        elif name == "execute_sql_query":
+            query = args.get("query", "").strip()
+            if not query.lower().startswith("select"):
+                return {"error": "Only SELECT queries are allowed for security reasons."}
+            res = frappe.db.sql(query, as_dict=True)
+            return {"output": res}
+
         else:
             return {"error": f"Tool {name} not found"}
     except Exception as e:
@@ -136,14 +194,17 @@ def execute_tool(name, args):
 
 # ── Main handler ───────────────────────────────────────────────
 @frappe.whitelist()
-def chat(messages):
+def chat(messages, approved_action=None):
     """
     Endpoint called by the chat page.
     messages: JSON string of [{role, content}, ...]
-    Returns: assistant reply string
+    approved_action: JSON string of tool to execute directly (after user approval)
+    Returns: assistant reply string or approval required dict
     """
     try:
         history = json.loads(messages) if isinstance(messages, str) else messages
+        if approved_action and isinstance(approved_action, str):
+            approved_action = json.loads(approved_action)
     except Exception:
         frappe.throw("Invalid messages format")
 
@@ -154,7 +215,7 @@ def chat(messages):
     if not api_key:
         frappe.throw(
             "Gemini API key not configured. "
-            "Run: bench --site manufactoring_site set-config gemini_api_key 'AIza-your-key'"
+            "Run: bench set-config gemini_api_key 'AIza-your-key'"
         )
 
     system_text = SYSTEM_PROMPT.format(
@@ -170,6 +231,18 @@ def chat(messages):
         contents.append({
             "role": role,
             "parts": [{"text": msg["content"]}]
+        })
+
+    # If the user just approved an action, artificially inject it so Gemini knows it executed
+    if approved_action:
+        contents.append({
+            "role": "model",
+            "parts": [{"functionCall": {"name": approved_action["name"], "args": approved_action["args"]}}]
+        })
+        result = execute_tool(approved_action["name"], approved_action["args"])
+        contents.append({
+            "role": "user",
+            "parts": [{"functionResponse": {"name": approved_action["name"], "response": result}}]
         })
 
     # Call Gemini in a loop to resolve multiple tool calls sequentially
@@ -208,10 +281,23 @@ def chat(messages):
         function_calls = [p.get("functionCall") for p in parts if p.get("functionCall")]
 
         if function_calls:
+            # INTERCEPT RISKY TOOLS FOR APPROVAL
+            risky_tools = ["create_document", "update_document", "execute_sql_query"]
+            for call in function_calls:
+                name = call.get("name")
+                args = call.get("args") or {}
+                
+                if name in risky_tools:
+                    # Return immediate dict response asking for frontend approval
+                    return {
+                        "requires_approval": True,
+                        "tool_call": {"name": name, "args": args}
+                    }
+
             # Add the model's tool request message to contents history
             contents.append(content)
 
-            # Execute the function calls
+            # Execute the function calls safely
             response_parts = []
             for call in function_calls:
                 name = call.get("name")
@@ -256,9 +342,6 @@ def check_ai_page():
 
 @frappe.whitelist()
 def execute_seed_expenses():
-    """
-    Triggers the monthly expenses and profitability seeding script
-    """
     import sys
     sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
     import phase_16_expenses
@@ -267,9 +350,6 @@ def execute_seed_expenses():
 
 @frappe.whitelist()
 def execute_verify_expenses():
-    """
-    Triggers the verification script for GP and NP ratios
-    """
     import sys
     sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
     import phase_16_expenses
@@ -278,9 +358,6 @@ def execute_verify_expenses():
 
 @frappe.whitelist()
 def execute_seed_stock_transfers():
-    """
-    Triggers the stock transfers and closing stock seeding script
-    """
     import sys
     sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
     import phase_17_stock_transfers
@@ -289,35 +366,23 @@ def execute_seed_stock_transfers():
 
 @frappe.whitelist()
 def execute_verify_stock_transfers():
-    """
-    Triggers the verification script for stock transfers and closing stock percentage
-    """
     import sys
     sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
     import phase_17_stock_transfers
     phase_17_stock_transfers.verify()
     return "Stock transfers verification completed successfully"
 
-
 @frappe.whitelist()
 def list_companies():
-    """
-    Returns list of companies and their abbreviations
-    """
     companies = frappe.get_all("Company", fields=["name", "abbr"])
     return companies
 
-
 @frappe.whitelist()
 def find_woodcraft_records():
-    """
-    Finds and counts all records for Wood Craft Furniture Pvt. Ltd. across all DocTypes
-    """
     import frappe
     company = "Wood Craft Furniture Pvt. Ltd."
     results = {}
     
-    # Get all standard non-child DocTypes
     all_doctypes = frappe.get_all("DocType", filters={"istable": 0})
     for d in all_doctypes:
         dt = d.name
@@ -330,8 +395,6 @@ def find_woodcraft_records():
         except Exception:
             pass
             
-    # Special check for tables that might refer to company or have abbr
-    # check for GL Entry and Stock Ledger Entry (they have company field)
     for dt in ["GL Entry", "Stock Ledger Entry"]:
         try:
             count = frappe.db.count(dt, filters={"company": company})
@@ -342,24 +405,16 @@ def find_woodcraft_records():
             
     return results
 
-
 @frappe.whitelist()
 def execute_cleanup_woodcraft():
-    """
-    Triggers the cleanup script for Wood Craft Furniture Pvt. Ltd.
-    """
     import sys
     sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
     import cleanup_woodcraft
     cleanup_woodcraft.execute()
     return "Wood Craft cleanup completed successfully"
 
-
 @frappe.whitelist()
 def execute_verify_cleanup_woodcraft():
-    """
-    Triggers the verification script for Wood Craft cleanup
-    """
     import sys
     sys.path.append("/mnt/d/Erp-bench/data_seeding_scripts")
     import cleanup_woodcraft
@@ -368,8 +423,3 @@ def execute_verify_cleanup_woodcraft():
         return "Wood Craft verification passed: no records remaining"
     else:
         return "Wood Craft verification failed: records remaining"
-
-
-
-
-

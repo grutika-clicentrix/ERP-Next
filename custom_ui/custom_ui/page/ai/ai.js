@@ -223,9 +223,13 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         sendBtn.disabled = false;
 
         if (r && r.message) {
-          var reply = r.message;
-          appendMessage('ai', reply);
-          history.push({ role: 'assistant', content: reply });
+          if (typeof r.message === 'object' && r.message.requires_approval) {
+             renderApprovalCard(r.message.tool_call);
+          } else {
+             var reply = r.message;
+             appendMessage('ai', reply);
+             history.push({ role: 'assistant', content: reply });
+          }
         } else {
           appendMessage('ai', '⚠ Sorry, I could not get a response. Please try again.');
         }
@@ -241,6 +245,125 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
   }
 
   window.sendMessage = sendMessage;
+
+  window.sendApprovedAction = function(btn, name, argsStr) {
+    var card = btn.closest('.approval-card');
+    card.innerHTML = '<em>Action approved. Executing...</em>';
+    
+    var args = JSON.parse(decodeURIComponent(argsStr));
+    var tool_call = {name: name, args: args};
+    
+    isLoading = true;
+    showTyping();
+    
+    frappe.call({
+      method: 'custom_ui.custom_ui.api.chat',
+      args: {
+        messages: JSON.stringify(history),
+        approved_action: JSON.stringify(tool_call)
+      },
+      callback: function(r) {
+        hideTyping();
+        isLoading = false;
+        if (r && r.message) {
+          if (typeof r.message === 'object' && r.message.requires_approval) {
+             renderApprovalCard(r.message.tool_call);
+          } else {
+             var reply = r.message;
+             appendMessage('ai', reply);
+             history.push({ role: 'assistant', content: reply });
+          }
+        }
+      },
+      error: function(err) {
+        hideTyping();
+        isLoading = false;
+        appendMessage('ai', '⚠ Execution failed.');
+      }
+    });
+  };
+
+  window.rejectAction = function(btn) {
+    var card = btn.closest('.approval-card');
+    card.innerHTML = '<em style="color:#DC2626;">Action rejected by user.</em>';
+    
+    var rejectionMsg = 'I have rejected this action. Please abort and wait for my next instruction.';
+    appendMessage('user', rejectionMsg);
+    history.push({ role: 'user', content: rejectionMsg });
+    
+    isLoading = true;
+    showTyping();
+    frappe.call({
+      method: 'custom_ui.custom_ui.api.chat',
+      args: {
+        messages: JSON.stringify(history)
+      },
+      callback: function(r) {
+        hideTyping();
+        isLoading = false;
+        if (r && r.message) {
+          if (typeof r.message === 'object' && r.message.requires_approval) {
+             renderApprovalCard(r.message.tool_call);
+          } else {
+             var reply = r.message;
+             appendMessage('ai', reply);
+             history.push({ role: 'assistant', content: reply });
+          }
+        }
+      }
+    });
+  };
+
+  function renderApprovalCard(tool_call) {
+    if (welcomeEl) welcomeEl.style.display = 'none';
+
+    var row = document.createElement('div');
+    row.className = 'msg-row ai';
+
+    var avatar = document.createElement('div');
+    avatar.className = 'msg-avatar';
+    avatar.textContent = '✦';
+
+    var bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    
+    var argsStr = encodeURIComponent(JSON.stringify(tool_call.args));
+    var actionName = "Action Required";
+    var userFriendlyMsg = "I need your permission to perform this action.";
+
+    if (tool_call.name === "create_document") {
+        actionName = "Create Record";
+        userFriendlyMsg = "Can I create a new <strong>" + (tool_call.args.doctype || "record") + "</strong>?";
+    } else if (tool_call.name === "update_document") {
+        actionName = "Modify Record";
+        userFriendlyMsg = "Can I modify the <strong>" + (tool_call.args.doctype || "record") + "</strong> (" + (tool_call.args.name || "Unknown") + ")?";
+    } else if (tool_call.name === "execute_sql_query") {
+        actionName = "Access Data";
+        var dt = tool_call.args.target_doctype || "database";
+        userFriendlyMsg = "Can I securely access the <strong>" + dt + "</strong> data to fulfill your request?";
+    }
+
+    bubble.innerHTML = `
+        <div class="approval-card">
+            <div class="approval-card-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                ${actionName}
+            </div>
+            <div class="approval-card-body" style="font-size: 14px; margin: 8px 0; color: var(--pro-text-main);">
+                ${userFriendlyMsg}
+            </div>
+            <div class="approval-card-actions">
+                <button class="approval-btn approve" onclick="sendApprovedAction(this, '${tool_call.name}', '${argsStr}')">Allow</button>
+                <button class="approval-btn reject" onclick="rejectAction(this)">Deny</button>
+            </div>
+        </div>
+    `;
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    scrollToBottom();
+  }
 
   // Focus input
   setTimeout(function() { inputEl.focus(); }, 300);
