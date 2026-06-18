@@ -20,3 +20,5 @@ web_include_css = ["/assets/custom_ui/css/minimal_desk_v8.css"]
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "custom_ui/public/scss/website"
+
+fixtures = ["Client Script", "AI Model Rate"]

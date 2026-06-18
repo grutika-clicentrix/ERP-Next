@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "AI Settings",
+  "enabled": 1,
+  "modified": "2026-06-18 16:48:45.227151",
+  "module": "Custom UI",
+  "name": "AI Settings Progress",
+  "script": "\nfrappe.ui.form.on('AI Settings', {\n    refresh: function(frm) {\n        if (!frm.doc.monthly_budget || frm.doc.monthly_budget <= 0) return;\n        \n        frappe.call({\n            method: 'custom_ui.custom_ui.api.get_current_month_cost',\n            callback: function(r) {\n                if (r.message !== undefined) {\n                    let cost = r.message || 0;\n                    let budget = frm.doc.monthly_budget;\n                    let percent = (cost / budget) * 100;\n                    \n                    let display_percent = percent > 100 ? 100 : percent;\n                    \n                    let color = 'green';\n                    if (percent > 80) color = 'orange';\n                    if (percent >= 100) color = 'red';\n                    \n                    let sys_currency = frappe.defaults.get_default(\"currency\") || \"USD\";\n                    let formatted_cost = format_currency(cost, sys_currency);\n                    let formatted_budget = format_currency(budget, sys_currency);\n                    \n                    frm.dashboard.set_headline(`Live AI Budget Utilized: ${formatted_cost} / ${formatted_budget}`, color);\n                    frm.dashboard.add_progress('AI Budget Utilization', display_percent, `${percent.toFixed(4)}% Utilized`);\n                    \n                    // Set the Percent field inline\n                    if (frm.doc.budget_utilized !== display_percent) {\n                        frm.set_value('budget_utilized', display_percent);\n                    }\n                }\n            }\n        });\n    }\n});\n",
+  "view": "Form"
+ }
+]

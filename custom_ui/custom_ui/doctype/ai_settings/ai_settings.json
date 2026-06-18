@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-18 12:54:06.997761",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_budget_checking",
+  "monthly_budget",
+  "alert_email",
+  "currency",
+  "budget_utilized"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enable_budget_checking",
+   "fieldtype": "Check",
+   "label": "Enable Budget Checking"
+  },
+  {
+   "default": "100.0",
+   "fieldname": "monthly_budget",
+   "fieldtype": "Currency",
+   "label": "Monthly Budget",
+   "options": "currency"
+  },
+  {
+   "fieldname": "alert_email",
+   "fieldtype": "Data",
+   "label": "Alert Email",
+   "options": "Email"
+  },
+  {
+   "default": "INR",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "description": "Visual percentage of the monthly AI budget utilized so far.",
+   "fieldname": "budget_utilized",
+   "fieldtype": "Percent",
+   "label": "AI Budget Utilization",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-06-18 17:19:39.115601",
+ "modified_by": "Administrator",
+ "module": "Custom UI",
+ "name": "AI Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

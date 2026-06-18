@@ -192,6 +192,77 @@ def execute_tool(name, args):
         frappe.log_error(title=f"AI Tool Exec Error: {name}", message=frappe.get_traceback())
         return {"error": str(e)}
 
+# ── Token Tracking & Budgeting ─────────────────────────────────
+def get_model_rates(model_name):
+    rate_doc = frappe.get_all("AI Model Rate", filters={"model_name": model_name}, fields=["prompt_token_price", "response_token_price"])
+    if rate_doc:
+        return rate_doc[0]
+    return {"prompt_token_price": 0.30, "response_token_price": 2.50}
+
+def calculate_cost(model_name, prompt_tokens, response_tokens):
+    rates = get_model_rates(model_name)
+    cost = (prompt_tokens / 1000000.0) * rates["prompt_token_price"] + (response_tokens / 1000000.0) * rates["response_token_price"]
+    return cost
+
+@frappe.whitelist()
+def get_current_month_cost():
+    from frappe.utils import nowdate, get_first_day
+    try:
+        first_day = get_first_day(nowdate())
+        usage_logs = frappe.get_all("AI Token Usage Log", filters={"request_time": [">=", first_day]}, fields=["total_cost"])
+        return sum(log.total_cost for log in usage_logs if log.total_cost)
+    except Exception:
+        return 0.0
+
+def check_budget():
+    try:
+        settings = frappe.get_single("AI Settings")
+        if not settings.enable_budget_checking:
+            return True, ""
+        
+        monthly_budget = settings.monthly_budget or 0.0
+        if monthly_budget <= 0:
+            return True, ""
+        
+        current_cost = get_current_month_cost()
+        
+        if current_cost >= monthly_budget:
+            if settings.alert_email:
+                try:
+                    frappe.sendmail(
+                        recipients=[settings.alert_email],
+                        subject="ERPNext AI Assistant: Monthly Budget Exceeded",
+                        message=f"The monthly budget of ${monthly_budget} has been exceeded. Current cost: ${current_cost:.4f}. API calls are now blocked."
+                    )
+                except Exception:
+                    pass
+            return False, f"Monthly AI budget of ${monthly_budget} exceeded. Please contact your administrator."
+    except Exception:
+        pass
+    return True, ""
+
+def log_token_usage(model_name, prompt_tokens, response_tokens, api_method="chat"):
+    from frappe.utils import now_datetime
+    try:
+        total_tokens = prompt_tokens + response_tokens
+        cost = calculate_cost(model_name, prompt_tokens, response_tokens)
+        
+        doc = frappe.get_doc({
+            "doctype": "AI Token Usage Log",
+            "user": frappe.session.user,
+            "model": model_name,
+            "prompt_tokens": prompt_tokens,
+            "response_tokens": response_tokens,
+            "total_tokens": total_tokens,
+            "total_cost": cost,
+            "api_method": api_method,
+            "request_time": now_datetime()
+        })
+        doc.insert(ignore_permissions=True)
+        frappe.db.commit()
+    except Exception as e:
+        frappe.log_error("Token Logging Failed", str(e))
+
 # ── Main handler ───────────────────────────────────────────────
 @frappe.whitelist()
 def chat(messages, approved_action=None):
@@ -217,6 +288,10 @@ def chat(messages, approved_action=None):
             "Gemini API key not configured. "
             "Run: bench set-config gemini_api_key 'AIza-your-key'"
         )
+
+    budget_ok, budget_msg = check_budget()
+    if not budget_ok:
+        return {"error": budget_msg}
 
     system_text = SYSTEM_PROMPT.format(
         company=frappe.defaults.get_global_default("company") or "Your Company",
@@ -246,6 +321,9 @@ def chat(messages, approved_action=None):
         })
 
     # Call Gemini in a loop to resolve multiple tool calls sequentially
+    accumulated_prompt_tokens = 0
+    accumulated_response_tokens = 0
+    
     for loop_count in range(8):  # limit to 8 turns to avoid infinite loops
         payload = {
             "system_instruction": {"parts": [{"text": system_text}]},
@@ -273,6 +351,16 @@ def chat(messages, approved_action=None):
             frappe.throw(f"Gemini API error {response.status_code}: {error_body.get('error', {}).get('message', 'Unknown error')}")
 
         data = response.json()
+        
+        usage_meta = data.get("usageMetadata", {})
+        pt = usage_meta.get("promptTokenCount", 0)
+        rt = usage_meta.get("candidatesTokenCount", 0)
+        
+        if pt > 0 or rt > 0:
+            log_token_usage(GEMINI_MODEL, pt, rt, "chat")
+            accumulated_prompt_tokens += pt
+            accumulated_response_tokens += rt
+
         candidate = data["candidates"][0]
         content = candidate.get("content", {})
         parts = content.get("parts", [])
@@ -291,7 +379,12 @@ def chat(messages, approved_action=None):
                     # Return immediate dict response asking for frontend approval
                     return {
                         "requires_approval": True,
-                        "tool_call": {"name": name, "args": args}
+                        "tool_call": {"name": name, "args": args},
+                        "tokens": {
+                            "prompt": accumulated_prompt_tokens,
+                            "response": accumulated_response_tokens,
+                            "total": accumulated_prompt_tokens + accumulated_response_tokens
+                        }
                     }
 
             # Add the model's tool request message to contents history
@@ -320,11 +413,19 @@ def chat(messages, approved_action=None):
         else:
             # No tool call; return the text response
             try:
-                return parts[0].get("text", "")
+                reply_text = parts[0].get("text", "")
+                return {
+                    "reply": reply_text,
+                    "tokens": {
+                        "prompt": accumulated_prompt_tokens,
+                        "response": accumulated_response_tokens,
+                        "total": accumulated_prompt_tokens + accumulated_response_tokens
+                    }
+                }
             except IndexError:
-                return "No response text returned."
+                return {"reply": "No response text returned.", "tokens": {}}
 
-    return "Max tool execution turns reached."
+    return {"error": "Max tool execution turns reached."}
 
 
 @frappe.whitelist()

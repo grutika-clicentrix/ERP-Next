@@ -95,7 +95,7 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  function appendMessage(role, content) {
+  function appendMessage(role, content, tokens) {
     if (welcomeEl) welcomeEl.style.display = 'none';
 
     var row = document.createElement('div');
@@ -112,6 +112,13 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
       bubble.textContent = content;
     } else {
       bubble.innerHTML = renderMarkdown(content);
+      
+      if (tokens && typeof tokens === 'object' && tokens.total > 0) {
+        var tokenBadge = document.createElement('div');
+        tokenBadge.className = 'token-badge';
+        tokenBadge.innerHTML = '✦ ' + tokens.total + ' tokens (' + tokens.prompt + ' prompt / ' + tokens.response + ' response)';
+        bubble.appendChild(tokenBadge);
+      }
       
       // Add Copy Button
       var copyBtn = document.createElement('button');
@@ -223,8 +230,15 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         sendBtn.disabled = false;
 
         if (r && r.message) {
-          if (typeof r.message === 'object' && r.message.requires_approval) {
-             renderApprovalCard(r.message.tool_call);
+          if (typeof r.message === 'object') {
+             if (r.message.error) {
+               appendMessage('ai', '⚠ ' + r.message.error);
+             } else if (r.message.requires_approval) {
+               renderApprovalCard(r.message.tool_call);
+             } else if (r.message.reply !== undefined) {
+               appendMessage('ai', r.message.reply, r.message.tokens);
+               history.push({ role: 'assistant', content: r.message.reply });
+             }
           } else {
              var reply = r.message;
              appendMessage('ai', reply);
@@ -266,8 +280,15 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         hideTyping();
         isLoading = false;
         if (r && r.message) {
-          if (typeof r.message === 'object' && r.message.requires_approval) {
-             renderApprovalCard(r.message.tool_call);
+          if (typeof r.message === 'object') {
+             if (r.message.error) {
+               appendMessage('ai', '⚠ ' + r.message.error);
+             } else if (r.message.requires_approval) {
+               renderApprovalCard(r.message.tool_call);
+             } else if (r.message.reply !== undefined) {
+               appendMessage('ai', r.message.reply, r.message.tokens);
+               history.push({ role: 'assistant', content: r.message.reply });
+             }
           } else {
              var reply = r.message;
              appendMessage('ai', reply);
@@ -302,8 +323,15 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         hideTyping();
         isLoading = false;
         if (r && r.message) {
-          if (typeof r.message === 'object' && r.message.requires_approval) {
-             renderApprovalCard(r.message.tool_call);
+          if (typeof r.message === 'object') {
+             if (r.message.error) {
+               appendMessage('ai', '⚠ ' + r.message.error);
+             } else if (r.message.requires_approval) {
+               renderApprovalCard(r.message.tool_call);
+             } else if (r.message.reply !== undefined) {
+               appendMessage('ai', r.message.reply, r.message.tokens);
+               history.push({ role: 'assistant', content: r.message.reply });
+             }
           } else {
              var reply = r.message;
              appendMessage('ai', reply);
@@ -327,7 +355,7 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     var bubble = document.createElement('div');
     bubble.className = 'msg-bubble';
     
-    var argsStr = encodeURIComponent(JSON.stringify(tool_call.args));
+    var argsStr = encodeURIComponent(JSON.stringify(tool_call.args || {})).replace(/'/g, "%27");
     var actionName = "Action Required";
     var userFriendlyMsg = "I need your permission to perform this action.";
 
