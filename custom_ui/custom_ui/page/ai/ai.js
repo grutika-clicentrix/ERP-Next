@@ -375,6 +375,11 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         var name = tool_call.args.name || "Unknown";
         var method = tool_call.args.method || "action";
         userFriendlyMsg = "Can I execute the method <strong>" + method + "</strong> on the <strong>" + dt + "</strong> (" + name + ")?";
+    } else if (tool_call.name === "send_email") {
+        actionName = "Send Email";
+        var rcpts = tool_call.args.recipients || "someone";
+        var subj = tool_call.args.subject || "No Subject";
+        userFriendlyMsg = "Can I send an email to <strong>" + rcpts + "</strong> with the subject <strong>" + subj + "</strong>?";
     }
 
     bubble.innerHTML = `

@@ -29,7 +29,8 @@ Rules:
 - If the data cannot be fetched via standard reports, you may use `execute_sql_query` to write a custom SELECT query.
 - Never use `execute_sql_query` for data modification.
 - When creating or updating documents, always use the tools provided. Confirm details with the user if necessary.
-- To trigger backend workflows on an existing document (e.g. sending an email for a Communication, submitting an Invoice, or canceling a document), use the `execute_document_method` tool.
+- To trigger backend workflows on an existing document (e.g. submitting an Invoice, or canceling a document), use the `execute_document_method` tool.
+- To send an email, ALWAYS use the `send_email` tool. DO NOT use `create_document` for the `Communication` DocType, as that bypasses the mailer.
 - Always respond in the same language the user writes in.
 - Never make up data. If you don't know, say so.
 
@@ -130,6 +131,21 @@ GEMINI_TOOLS = [
                     },
                     "required": ["doctype", "name", "method"]
                 }
+            },
+            {
+                "name": "send_email",
+                "description": "Send an email. This correctly adds the email to the Frappe Email Queue and creates the Communication record.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "recipients": {"type": "STRING", "description": "Comma-separated list of email addresses"},
+                        "subject": {"type": "STRING", "description": "Email subject"},
+                        "message": {"type": "STRING", "description": "Email body content (HTML allowed)"},
+                        "reference_doctype": {"type": "STRING", "description": "DocType this email relates to (e.g., 'Purchase Order')"},
+                        "reference_name": {"type": "STRING", "description": "Document name this email relates to (e.g., 'PUR-ORD-2026-00490')"}
+                    },
+                    "required": ["recipients", "subject", "message"]
+                }
             }
         ]
     }
@@ -180,6 +196,24 @@ def execute_tool(name, args):
             result = doc.run_method(method, **method_args)
             frappe.db.commit()
             return {"output": {"status": "Success", "method": method, "result": result}}
+
+        elif name == "send_email":
+            recipients = args.get("recipients")
+            subject = args.get("subject")
+            message = args.get("message")
+            reference_doctype = args.get("reference_doctype")
+            reference_name = args.get("reference_name")
+            
+            # frappe.sendmail natively handles queueing, creating Communication, and linking
+            frappe.sendmail(
+                recipients=recipients,
+                subject=subject,
+                message=message,
+                reference_doctype=reference_doctype,
+                reference_name=reference_name
+            )
+            frappe.db.commit()
+            return {"output": {"status": "Success", "message": "Email has been sent and added to the Email Queue."}}
 
         elif name == "execute_frappe_report":
             report_name = args.get("report_name")
