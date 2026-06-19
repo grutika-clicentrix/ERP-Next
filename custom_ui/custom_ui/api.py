@@ -204,11 +204,14 @@ def execute_tool(name, args):
             reference_doctype = args.get("reference_doctype")
             reference_name = args.get("reference_name")
             
+            # Convert AI markdown to HTML so tables, bolds, etc render correctly in the email
+            html_message = frappe.utils.md_to_html(message) if message else ""
+            
             # frappe.sendmail natively handles queueing, creating Communication, and linking
             frappe.sendmail(
                 recipients=recipients,
                 subject=subject,
-                message=message,
+                message=html_message,
                 reference_doctype=reference_doctype,
                 reference_name=reference_name
             )
