@@ -29,6 +29,7 @@ Rules:
 - If the data cannot be fetched via standard reports, you may use `execute_sql_query` to write a custom SELECT query.
 - Never use `execute_sql_query` for data modification.
 - When creating or updating documents, always use the tools provided. Confirm details with the user if necessary.
+- To trigger backend workflows on an existing document (e.g. sending an email for a Communication, submitting an Invoice, or canceling a document), use the `execute_document_method` tool.
 - Always respond in the same language the user writes in.
 - Never make up data. If you don't know, say so.
 
@@ -115,6 +116,20 @@ GEMINI_TOOLS = [
                     },
                     "required": ["query", "target_doctype"]
                 }
+            },
+            {
+                "name": "execute_document_method",
+                "description": "Execute a specific backend method on an existing document (e.g., 'send' to send a Communication, 'submit' to submit an invoice).",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "doctype": {"type": "STRING", "description": "The DocType name"},
+                        "name": {"type": "STRING", "description": "The document name/ID"},
+                        "method": {"type": "STRING", "description": "The method to execute (e.g., 'send', 'submit', 'cancel')"},
+                        "args": {"type": "OBJECT", "description": "Optional keyword arguments for the method"}
+                    },
+                    "required": ["doctype", "name", "method"]
+                }
             }
         ]
     }
@@ -154,6 +169,17 @@ def execute_tool(name, args):
             doc.save()
             frappe.db.commit()
             return {"output": {"status": "Success", "name": doc.name, "doc": doc.as_dict()}}
+
+        elif name == "execute_document_method":
+            doctype = args.get("doctype")
+            docname = args.get("name")
+            method = args.get("method")
+            method_args = args.get("args") or {}
+            
+            doc = frappe.get_doc(doctype, docname)
+            result = doc.run_method(method, **method_args)
+            frappe.db.commit()
+            return {"output": {"status": "Success", "method": method, "result": result}}
 
         elif name == "execute_frappe_report":
             report_name = args.get("report_name")

@@ -369,6 +369,12 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
         actionName = "Access Data";
         var dt = tool_call.args.target_doctype || "database";
         userFriendlyMsg = "Can I securely access the <strong>" + dt + "</strong> data to fulfill your request?";
+    } else if (tool_call.name === "execute_document_method") {
+        actionName = "Execute Workflow";
+        var dt = tool_call.args.doctype || "record";
+        var name = tool_call.args.name || "Unknown";
+        var method = tool_call.args.method || "action";
+        userFriendlyMsg = "Can I execute the method <strong>" + method + "</strong> on the <strong>" + dt + "</strong> (" + name + ")?";
     }
 
     bubble.innerHTML = `
