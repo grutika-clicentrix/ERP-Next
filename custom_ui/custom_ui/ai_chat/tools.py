@@ -83,12 +83,21 @@ def execute_tool(name, args):
 
             from frappe.desk.query_report import run
             res = run(report_name, filters=filters)
+            
+            # Helper to truncate results
+            def truncate_res(data):
+                if isinstance(data, list) and len(data) > 150:
+                    # Keep the first 150 rows, but if there's a grand total at the end, we might lose it.
+                    # It's better than crashing the AI.
+                    return data[:150]
+                return data
+
             if isinstance(res, dict):
-                return {"output": {"columns": res.get("columns"), "result": res.get("result")}}
+                return {"output": {"columns": res.get("columns"), "result": truncate_res(res.get("result"))}}
             elif isinstance(res, tuple) and len(res) >= 2:
-                return {"output": {"columns": res[0], "result": res[1]}}
+                return {"output": {"columns": res[0], "result": truncate_res(res[1])}}
             else:
-                return {"output": str(res)}
+                return {"output": str(res)[:10000]}
 
         elif name == "execute_sql_query":
             query = args.get("query", "").strip()

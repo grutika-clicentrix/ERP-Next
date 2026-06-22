@@ -57,6 +57,14 @@ def chat(messages, approved_action=None):
         })
 
     # If the user just approved an action, artificially inject it so Gemini knows it executed
+    new_history = []
+    
+    def truncate_result(res):
+        res_str = json.dumps(res, default=str)
+        if len(res_str) > 2000:
+            return res_str[:2000] + "... [Truncated]"
+        return res_str
+
     if approved_action:
         contents.append({
             "role": "model",
@@ -66,6 +74,14 @@ def chat(messages, approved_action=None):
         contents.append({
             "role": "user",
             "parts": [{"functionResponse": {"name": approved_action["name"], "response": result}}]
+        })
+        new_history.append({
+            "role": "assistant",
+            "content": f"[System: Executed tool {approved_action['name']} with args {json.dumps(approved_action['args'])}]"
+        })
+        new_history.append({
+            "role": "user",
+            "content": f"[System: Tool result: {truncate_result(result)}]"
         })
 
     # Call Gemini in a loop to resolve multiple tool calls sequentially
@@ -118,7 +134,7 @@ def chat(messages, approved_action=None):
 
         if function_calls:
             # INTERCEPT RISKY TOOLS FOR APPROVAL
-            risky_tools = ["create_document", "update_document", "execute_sql_query"]
+            risky_tools = ["create_document", "update_document", "execute_sql_query", "execute_document_method", "send_email"]
             for call in function_calls:
                 name = call.get("name")
                 args = call.get("args") or {}
@@ -128,6 +144,7 @@ def chat(messages, approved_action=None):
                     return {
                         "requires_approval": True,
                         "tool_call": {"name": name, "args": args},
+                        "new_history": new_history,
                         "tokens": {
                             "prompt": accumulated_prompt_tokens,
                             "response": accumulated_response_tokens,
@@ -150,6 +167,14 @@ def chat(messages, approved_action=None):
                         "response": result
                     }
                 })
+                new_history.append({
+                    "role": "assistant",
+                    "content": f"[System: Executed tool {name} with args {json.dumps(args)}]"
+                })
+                new_history.append({
+                    "role": "user",
+                    "content": f"[System: Tool result: {truncate_result(result)}]"
+                })
 
             # Append the tool results message to contents history
             contents.append({
@@ -161,9 +186,10 @@ def chat(messages, approved_action=None):
         else:
             # No tool call; return the text response
             try:
-                reply_text = parts[0].get("text", "")
+                reply_text = "".join([p.get("text", "") for p in parts if "text" in p])
                 return {
                     "reply": reply_text,
+                    "new_history": new_history,
                     "tokens": {
                         "prompt": accumulated_prompt_tokens,
                         "response": accumulated_response_tokens,
@@ -171,6 +197,6 @@ def chat(messages, approved_action=None):
                     }
                 }
             except IndexError:
-                return {"reply": "No response text returned.", "tokens": {}}
+                return {"reply": "No response text returned.", "new_history": new_history, "tokens": {}}
 
     return {"error": "Max tool execution turns reached."}
