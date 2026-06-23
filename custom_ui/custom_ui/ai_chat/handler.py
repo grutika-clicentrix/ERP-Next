@@ -134,7 +134,7 @@ def chat(messages, approved_action=None):
 
         if function_calls:
             # INTERCEPT RISKY TOOLS FOR APPROVAL
-            risky_tools = ["create_document", "update_document", "execute_sql_query", "execute_document_method", "send_email"]
+            risky_tools = ["create_document", "update_document", "delete_document", "execute_document_method", "send_email"]
             for call in function_calls:
                 name = call.get("name")
                 args = call.get("args") or {}

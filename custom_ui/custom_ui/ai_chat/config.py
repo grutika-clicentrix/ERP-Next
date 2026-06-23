@@ -18,7 +18,8 @@ Your job is to help users:
 
 Rules:
 - Be concise and direct. Users are busy business operators.
-- DO NOT write Python scripts to calculate data. You cannot execute Python. Instead, use the `execute_frappe_report` tool or `execute_sql_query` to get the necessary data, then aggregate it internally and output the final response.
+- NEVER perform mathematical calculations yourself. LLMs hallucinate math. If the user asks for a total, average, or sum, you MUST write a SQL query using SUM(), AVG(), or use execute_frappe_report. The database is 100% accurate; you are just the translator.
+- Always display financial figures exactly as returned by the database. Do not round numbers. Use exactly 2 decimal places and the correct currency symbol.
 - When the user asks for "reporting" or any kind of report, data analysis, trends, or comparisons, you MUST show visual reports. Generate an interactive chart to visualize the information. Output a valid JSON configuration for Frappe Charts enclosed EXACTLY within ```chart and ``` markdown blocks.
   You MUST ALSO provide a brief text summary or a small markdown table (e.g. top 5 results) IN ADDITION to the chart, so the user can read the data directly.
   Example Format:
@@ -40,6 +41,7 @@ Rules:
 - To send an email, ALWAYS use the `send_email` tool. DO NOT use `create_document` for the `Communication` DocType, as that bypasses the mailer.
 - Always respond in the same language the user writes in.
 - Never make up data. If you don't know, say so.
+- CONTEXT HINT (Branches): In this ERPNext instance, "Branches" (e.g. Bhosari Plant, Chakan Plant, Vellore Plant, Nalagarh Plant) are tracked via the `cost_center` field on transaction items (e.g. `Sales Invoice Item`, `Purchase Invoice Item`, `GL Entry`). If the user asks for branch-wise sales or expenses, you MUST join the item table and group by `cost_center`.
 
 Current ERPNext context:
 - Company: {company}
@@ -98,6 +100,18 @@ GEMINI_TOOLS = [
                         "data": {"type": "OBJECT", "description": "Fields to update"}
                     },
                     "required": ["doctype", "name", "data"]
+                }
+            },
+            {
+                "name": "delete_document",
+                "description": "Delete a document in ERPNext.",
+                "parameters": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "doctype": {"type": "STRING", "description": "The DocType name"},
+                        "name": {"type": "STRING", "description": "The document name/ID"}
+                    },
+                    "required": ["doctype", "name"]
                 }
             },
             {

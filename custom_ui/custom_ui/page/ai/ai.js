@@ -5,17 +5,41 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
   $(wrapper).addClass('ai-assistant-page-wrapper');
   $('body').addClass('ai-assistant-page-active');
 
+  // Ensure the class is added on initial load
+  $('body').addClass('ai-assistant-page-active');
+  $(wrapper).show();
+
+  // Use MutationObserver to reliably detect when Frappe hides/shows this page wrapper.
+  // This bypasses any routing or pushState anomalies.
+  const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      if (mutation.attributeName === 'style' || mutation.attributeName === 'class') {
+        if (wrapper.style.display === 'none') {
+          $('body').removeClass('ai-assistant-page-active');
+        } else {
+          $('body').addClass('ai-assistant-page-active');
+        }
+      }
+    });
+  });
+
+  observer.observe(wrapper, { attributes: true, attributeFilter: ['style', 'class'] });
+
+  // Fallback lifecycle hooks
   frappe.pages["ai"].on_page_show = function (wrapper) {
     $('body').addClass('ai-assistant-page-active');
-    // scroll to bottom on load
-    if (typeof scrollToBottom === 'function') {
-      scrollToBottom();
-    }
+    $(wrapper).show();
+    if (typeof scrollToBottom === 'function') scrollToBottom();
   };
 
   frappe.pages["ai"].on_page_hide = function (wrapper) {
     $('body').removeClass('ai-assistant-page-active');
   };
+
+  // Clean up observer on page destruction
+  $(wrapper).on('destroy', function () {
+    observer.disconnect();
+  });
 
   let page = frappe.ui.make_app_page({
     parent: wrapper,
@@ -23,30 +47,19 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     single_column: true,
   });
   const ALL_PROMPTS = [
-    { text: "Show today's revenue vs target and cash position.", icon: "💰" },
-    { text: "Show yesterday's production output and downtime.", icon: "🏭" },
-    { text: "Show our on-time delivery rate this week.", icon: "📦" },
-    { text: "What approvals are pending in my queue?", icon: "✅" },
-    { text: "Show the sales pipeline and order book status.", icon: "📊" },
-    { text: "Show capacity utilization across all plants.", icon: "⚙️" },
-    { text: "Show current cash position across all bank accounts.", icon: "🏦" },
-    { text: "List clients with invoices overdue by more than 30 days.", icon: "🧾" },
-    { text: "Which product lines have the lowest gross margins?", icon: "📉" },
-    { text: "Compare actual operational expenses vs budget.", icon: "📋" },
-    { text: "Show P&L and Cash Flow summary for today.", icon: "📈" },
-    { text: "List all tax and compliance deadlines this month.", icon: "📅" },
-    { text: "Are there any supplier delays affecting production today?", icon: "🚛" },
-    { text: "Check raw material levels across all warehouses.", icon: "📦" },
-    { text: "Where are the bottlenecks in order fulfillment?", icon: "🔍" },
-    { text: "Show scheduled production capacity for tomorrow.", icon: "🗓️" },
-    { text: "Show net profit margin trend for this week.", icon: "💹" },
-    { text: "List operational issues not resolved today.", icon: "⚠️" },
-    { text: "Compare shipping costs of our top 3 delivery partners.", icon: "🚢" },
-    { text: "Give me a 5-minute briefing on company performance today.", icon: "⚡" },
+    { text: "Review daily production targets and Work Order output.", icon: "🏭" },
+    { text: "Check Raw Material and Finished Goods Inventory Levels.", icon: "📦" },
+    { text: "Follow up on supplier deliveries and outstanding purchase invoices.", icon: "🚛" },
+    { text: "Identify bottlenecks in Lead-to-Cash cycle (Sales Orders to Delivery).", icon: "🔍" },
+    { text: "Review Sales Revenue vs Outstanding Debt for FY 2025-2026.", icon: "📈" },
+    { text: "Analyze operating expenses by plant for FY 2025-2026.", icon: "📋" },
+    { text: "Review profitability and top customers for FY 2025-2026.", icon: "👥" },
+    { text: "Check Cash Position: Accounts Receivable vs Accounts Payable.", icon: "💰" },
+    { text: "Monitor branch-wise Sales Performance and targets.", icon: "📊" },
+    { text: "Review stock transfers and inter-branch movements.", icon: "🔄" },
+    { text: "Check General Ledger summary for inefficiencies or cost leaks.", icon: "🧾" },
+    { text: "End of Day Review: Output vs Plan and next day actions.", icon: "⚡" },
   ];
-
-  let tickerInterval = null;
-  let tickerIndex = 0;
 
   function formatPromptTextForDisplay(text) {
     return text.replace(/\[([^\]]+)\]/g, function (match, placeholder) {
@@ -54,80 +67,37 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     });
   }
 
-  function stopTicker() {
-    if (tickerInterval) {
-      clearInterval(tickerInterval);
-      tickerInterval = null;
-    }
-  }
-
-  function startTicker() {
-    stopTicker();
-    tickerIndex = 0;
-    renderTickerSlide(true);
-    tickerInterval = setInterval(function () {
-      tickerIndex = (tickerIndex + 2) % ALL_PROMPTS.length;
-      renderTickerSlide(false);
-    }, 3800);
-  }
-
-  function renderTickerSlide(instant) {
-    const track = wrapper.querySelector('#prompt-ticker-track');
-    if (!track) return;
-
-    const idx1 = tickerIndex % ALL_PROMPTS.length;
-    const idx2 = (tickerIndex + 1) % ALL_PROMPTS.length;
-
-    const makeCard = (p) => {
-      const displayHtml = formatPromptTextForDisplay(p.text);
-      return `<div class="ticker-prompt-card" data-prompt="${p.text.replace(/"/g, '&quot;')}">
-        <div class="ticker-card-icon">${p.icon}</div>
-        <div class="ticker-prompt-text">${displayHtml}</div>
-        <div class="ticker-prompt-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </div>
-      </div>`;
-    };
-
-    const attachClicks = () => {
-      track.querySelectorAll('.ticker-prompt-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const pt = card.getAttribute('data-prompt');
-          if (typeof window.selectSuggestion === 'function') window.selectSuggestion(pt);
-        });
-      });
-    };
-
-    if (instant) {
-      track.innerHTML = makeCard(ALL_PROMPTS[idx1]) + makeCard(ALL_PROMPTS[idx2]);
-      attachClicks();
-    } else {
-      track.style.transition = 'none';
-      track.style.opacity = '0';
-      track.style.transform = 'translateY(10px)';
-      setTimeout(() => {
-        track.innerHTML = makeCard(ALL_PROMPTS[idx1]) + makeCard(ALL_PROMPTS[idx2]);
-        attachClicks();
-        track.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        track.style.opacity = '1';
-        track.style.transform = 'translateY(0)';
-      }, 90);
-    }
-  }
-
   function initExecutiveSuite() {
     const root = wrapper.querySelector('#executive-suite-root');
     if (!root) return;
 
+    // Shuffle and pick 8 prompts randomly
+    const shuffled = [...ALL_PROMPTS].sort(() => 0.5 - Math.random());
+    const selectedPrompts = shuffled.slice(0, 8);
+
+    let pillsHtml = selectedPrompts.map(p => {
+      const displayHtml = formatPromptTextForDisplay(p.text);
+      return `<div class="suggestion-pill" data-prompt="${p.text.replace(/"/g, '&quot;')}">
+        <span class="pill-icon">${p.icon}</span>
+        <span class="pill-text">${displayHtml}</span>
+      </div>`;
+    }).join('');
+
     root.innerHTML = `
       <div class="executive-suite-container">
-        <div class="prompt-ticker-wrapper">
-          <div class="prompt-ticker-track" id="prompt-ticker-track"></div>
+        <div class="suggestion-pills-container">
+          ${pillsHtml}
         </div>
       </div>
     `;
 
-    startTicker();
+    // Attach click events
+    root.querySelectorAll('.suggestion-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const pt = pill.getAttribute('data-prompt');
+        if (typeof window.selectSuggestion === 'function') window.selectSuggestion(pt);
+      });
+    });
   }
 
 

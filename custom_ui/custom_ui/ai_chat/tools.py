@@ -34,6 +34,13 @@ def execute_tool(name, args):
             frappe.db.commit()
             return {"output": {"status": "Success", "name": doc.name, "doc": doc.as_dict()}}
 
+        elif name == "delete_document":
+            doctype = args.get("doctype")
+            docname = args.get("name")
+            frappe.delete_doc(doctype, docname)
+            frappe.db.commit()
+            return {"output": {"status": "Success", "message": f"Deleted {doctype} {docname}"}}
+
         elif name == "execute_document_method":
             doctype = args.get("doctype")
             docname = args.get("name")

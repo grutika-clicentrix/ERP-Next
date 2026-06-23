@@ -1,5 +1,6 @@
 /* Flawless AI Assistant UI - Emerald Green & Minimal Desk v8 Theme */
-.ai-assistant-page-wrapper .page-content { padding: 0 !important; }
+/* Scoped padding reset — only apply inside the active AI wrapper */
+body.ai-assistant-page-active .ai-assistant-page-wrapper .page-content { padding: 0 !important; }
 
 /* Force main outer layouts to fill the page height */
 body.ai-assistant-page-active,
@@ -17,12 +18,12 @@ body.ai-assistant-page-active .page-wrapper .container {
   margin: 0 !important;
 }
 
-/* Ensure flex tree down to chat root */
+/* Ensure flex tree down to chat root — scoped to active state so Frappe can hide this page normally */
 body.ai-assistant-page-active .layout-main,
 body.ai-assistant-page-active .layout-main-section,
-.ai-assistant-page-wrapper,
-.ai-assistant-page-wrapper .page-body,
-.ai-assistant-page-wrapper .page-content {
+body.ai-assistant-page-active .ai-assistant-page-wrapper,
+body.ai-assistant-page-active .ai-assistant-page-wrapper .page-body,
+body.ai-assistant-page-active .ai-assistant-page-wrapper .page-content {
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
@@ -31,11 +32,6 @@ body.ai-assistant-page-active .layout-main-section,
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
-}
-
-/* Ensure only our page wrapper gets display flex! Avoids un-hiding other frappe pages */
-.ai-assistant-page-wrapper {
-  display: flex !important;
 }
 
 /* Hide standard page head in the wrapper to prevent duplicate title headers */
@@ -301,109 +297,57 @@ body.ai-assistant-page-active .layout-main-section,
 
 /* Executive Suite Container */
 .executive-suite-container {
-  margin-top: 24px;
+  margin-top: 16px;
   width: 100%;
   max-width: 860px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
   box-sizing: border-box;
 }
 
-/* ── Animated Prompt Ticker ── */
-.prompt-ticker-wrapper {
+/* ── Static Suggestion Pills ── */
+.suggestion-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
   width: 100%;
-  position: relative;
-  display: flex;
 }
 
-.prompt-ticker-track {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  box-sizing: border-box;
-}
-
-/* Ticker Prompt Cards — Large & Eye-Catching */
-.ticker-prompt-card {
-  background: #FFFFFF;
-  border: 1.5px solid var(--pro-border, #E2E8F0);
-  border-radius: 16px;
-  padding: 22px 20px 20px;
+.suggestion-pill {
+  background: var(--pro-surface, #FFFFFF);
+  border: 1px solid var(--pro-border, #E2E8F0);
+  border-radius: 24px;
+  padding: 8px 16px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-sizing: border-box;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-}
-
-.ticker-prompt-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(0, 98, 105, 0.04) 0%, rgba(0, 153, 163, 0.06) 100%);
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.ticker-prompt-card:hover {
-  border-color: var(--pro-accent);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 98, 105, 0.14), 0 0 0 1px rgba(0, 153, 163, 0.18);
-}
-
-.ticker-prompt-card:hover::before {
-  opacity: 1;
-}
-
-.ticker-card-icon {
-  font-size: 28px;
-  line-height: 1;
-  display: block;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
-}
-
-.ticker-prompt-text {
-  font-size: 14.5px;
-  line-height: 1.5;
-  color: var(--pro-text-main, #1E293B);
-  font-weight: 600;
-  flex: 1;
-  white-space: normal;
-}
-
-.ticker-prompt-arrow {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--pro-primary-light, rgba(0, 98, 105, 0.08));
-  color: var(--pro-primary);
   display: flex;
   align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: all 0.22s ease;
-  flex-shrink: 0;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
-.ticker-prompt-arrow svg {
-  width: 14px;
-  height: 14px;
+.suggestion-pill:hover {
+  border-color: var(--pro-accent);
+  background: rgba(0, 153, 163, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 98, 105, 0.08);
 }
 
-.ticker-prompt-card:hover .ticker-prompt-arrow {
-  opacity: 1;
-  transform: translateX(0);
+.suggestion-pill .pill-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.suggestion-pill .pill-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--pro-text-main, #1E293B);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
 }
 
 .prompt-text-placeholder {
@@ -865,18 +809,46 @@ body.ai-assistant-page-active .layout-main-section,
     padding: 12px 16px;
   }
   #chat-messages {
-    padding: 16px;
+    padding: 16px 12px;
     gap: 16px;
   }
+  .welcome-icon-ring {
+    width: 64px; height: 64px;
+    margin-bottom: 8px;
+  }
+  .welcome-icon-ring .welcome-icon {
+    width: 48px; height: 48px;
+    font-size: 24px;
+  }
+  .welcome-headline {
+    font-size: 24px;
+  }
+  .welcome-sub {
+    font-size: 13.5px;
+  }
   .msg-bubble {
-    max-width: 88%;
+    max-width: 92%;
+    font-size: 13px;
+  }
+  .suggestion-pills-container {
+    gap: 8px;
+  }
+  .suggestion-pill {
+    padding: 6px 12px;
+  }
+  .suggestion-pill .pill-text {
+    font-size: 12.5px;
+    max-width: 200px;
   }
   #chat-input-area {
-    padding: 10px 16px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 10px 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
-  .prompt-ticker-track {
-    grid-template-columns: 1fr;
+  #chat-input-wrap {
+    padding: 6px 6px 6px 12px;
+  }
+  #send-btn {
+    width: 36px; height: 36px;
   }
 }
 
