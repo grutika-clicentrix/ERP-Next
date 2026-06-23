@@ -47,18 +47,18 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     single_column: true,
   });
   const ALL_PROMPTS = [
+    { text: "Check Cash Position: Accounts Receivable vs Accounts Payable.", icon: "💰" },
+    { text: "Review profitability and top customers for FY 2025-2026.", icon: "👥" },
     { text: "Review daily production targets and Work Order output.", icon: "🏭" },
     { text: "Check Raw Material and Finished Goods Inventory Levels.", icon: "📦" },
     { text: "Follow up on supplier deliveries and outstanding purchase invoices.", icon: "🚛" },
-    { text: "Identify bottlenecks in Lead-to-Cash cycle (Sales Orders to Delivery).", icon: "🔍" },
     { text: "Review Sales Revenue vs Outstanding Debt for FY 2025-2026.", icon: "📈" },
     { text: "Analyze operating expenses by plant for FY 2025-2026.", icon: "📋" },
-    { text: "Review profitability and top customers for FY 2025-2026.", icon: "👥" },
-    { text: "Check Cash Position: Accounts Receivable vs Accounts Payable.", icon: "💰" },
     { text: "Monitor branch-wise Sales Performance and targets.", icon: "📊" },
     { text: "Review stock transfers and inter-branch movements.", icon: "🔄" },
     { text: "Check General Ledger summary for inefficiencies or cost leaks.", icon: "🧾" },
     { text: "End of Day Review: Output vs Plan and next day actions.", icon: "⚡" },
+    { text: "Identify bottlenecks in Lead-to-Cash cycle (Sales Orders to Delivery).", icon: "🔍" }
   ];
 
   function formatPromptTextForDisplay(text) {
@@ -73,7 +73,7 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
 
     // Shuffle and pick 8 prompts randomly
     const shuffled = [...ALL_PROMPTS].sort(() => 0.5 - Math.random());
-    const selectedPrompts = shuffled.slice(0, 8);
+    const selectedPrompts = ALL_PROMPTS;
 
     let pillsHtml = selectedPrompts.map(p => {
       const displayHtml = formatPromptTextForDisplay(p.text);
@@ -291,6 +291,20 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     scrollToBottom();
   }
 
+  const funkyStatuses = [
+    "Synthesizing financial telemetry...",
+    "Aggregating enterprise ledgers...",
+    "Correlating supply chain variables...",
+    "Extrapolating performance metrics...",
+    "Cross-referencing capital expenditures...",
+    "Analyzing operational bottlenecks...",
+    "Distilling multi-plant data...",
+    "Parsing global fiscal trends...",
+    "Consolidating executive insights...",
+    "Evaluating yield and throughput...",
+    "Modeling strategic outcomes..."
+  ];
+
   function showTyping() {
     var row = document.createElement('div');
     row.className = 'msg-row ai';
@@ -299,15 +313,32 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     var avatar = document.createElement('div');
     avatar.className = 'msg-avatar';
     avatar.textContent = '✦';
+    avatar.style.animation = 'pulse-avatar 1.5s infinite';
 
     var indicator = document.createElement('div');
-    indicator.className = 'typing-indicator';
-    indicator.innerHTML = '<span></span><span></span><span></span>';
+    indicator.className = 'msg-bubble';
+    indicator.style.padding = '12px 18px';
+    indicator.style.display = 'flex';
+    indicator.style.flexDirection = 'column';
+    indicator.style.alignItems = 'center';
+    indicator.innerHTML = `
+      <div class="liquid-thinking"></div>
+      <div id="thinking-status-text" class="thinking-status">${funkyStatuses[0]}</div>
+    `;
 
     row.appendChild(avatar);
     row.appendChild(indicator);
     messagesEl.appendChild(row);
     scrollToBottom();
+
+    let statusIndex = 0;
+    typingStatusInterval = setInterval(() => {
+      let statusEl = document.getElementById('thinking-status-text');
+      if (statusEl) {
+        statusIndex = (statusIndex + 1) % funkyStatuses.length;
+        statusEl.textContent = funkyStatuses[statusIndex];
+      }
+    }, 2500);
   }
 
   // Bind handlers globally on window (mapped to wrapper scope)
@@ -360,7 +391,12 @@ frappe.pages["ai"].on_page_load = function (wrapper) {
     initExecutiveSuite();
   };
 
+  let typingStatusInterval;
+
   function hideTyping() {
+    if (typingStatusInterval) {
+      clearInterval(typingStatusInterval);
+    }
     var el = wrapper.querySelector('#typing-row');
     if (el) el.remove();
   }
