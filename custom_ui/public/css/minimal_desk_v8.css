@@ -577,3 +577,154 @@ ul#navbar-breadcrumbs li > a {
 .modal-dialog .modal-body {
     padding: 20px !important;
 }
+
+/* =====================================================
+   WEB PORTAL & SUPPLIER PORTAL UI REFINEMENT (Matched to Minimal v8)
+   ===================================================== */
+
+/* Page Background & Typography */
+.web-page, .web-template, .page-container, .web-wrapper {
+    background-color: var(--pro-bg) !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    color: var(--pro-text-main) !important;
+}
+
+/* Web Sidebar (Matches .layout-side-section) */
+.web-sidebar {
+    background: linear-gradient(180deg, #FFFFFF 0%, #DBE9EE 100%) !important;
+    border-right: 1px solid var(--pro-border) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: 12px 0 25px -4px rgba(0, 98, 105, 0.25) !important;
+    padding: 20px !important;
+    margin-right: 20px !important;
+    margin-top: 15px !important;
+}
+
+.web-sidebar .sidebar-item {
+    padding: 8px 16px !important;
+    margin-bottom: 8px !important;
+    border-radius: var(--radius-md) !important;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    border: 1px solid transparent !important;
+    color: var(--pro-text-muted) !important;
+    font-weight: 500 !important;
+    display: block;
+}
+
+.web-sidebar .sidebar-item:hover {
+    background-color: #FFFFFF !important;
+    border: 1px solid var(--pro-border) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 98, 105, 0.05) !important;
+    transform: translateX(4px) scale(1.02);
+    color: var(--pro-text-main) !important;
+    text-decoration: none !important;
+}
+
+.web-sidebar .sidebar-item.active {
+    background: linear-gradient(135deg, var(--pro-primary) 0%, var(--pro-accent) 100%) !important;
+    color: white !important;
+    border: 1px solid var(--pro-primary-hover) !important;
+    box-shadow: 0 6px 12px -2px rgba(0, 153, 163, 0.35) !important;
+    transform: scale(1.02);
+}
+
+/* Content Area & Cards (Matches .widget-group) */
+.page-content, .rfq-content, #order-container, .web-form-wrapper {
+    background: var(--pro-surface) !important;
+    border: 1px solid var(--pro-border) !important;
+    border-top: 3px solid var(--pro-primary) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: 0 8px 16px -4px rgba(0, 98, 105, 0.06), 0 4px 6px -2px rgba(0, 98, 105, 0.03) !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    margin-top: 15px !important;
+    transition: box-shadow 0.3s ease, transform 0.3s ease !important;
+}
+
+.page-content:hover, .rfq-content:hover, #order-container:hover, .web-form-wrapper:hover {
+    box-shadow: 0 16px 24px -6px rgba(0, 98, 105, 0.1), 0 8px 10px -4px rgba(0, 98, 105, 0.05) !important;
+}
+
+/* Tables & Lists in Portal (Matches .grid-row) */
+.cart-item-header {
+    background-color: var(--pro-bg) !important;
+    border-top: 1px solid var(--pro-border) !important;
+    border-bottom: 1px solid var(--pro-border) !important;
+    font-weight: 600 !important;
+    color: var(--pro-text-muted) !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    padding: 10px 15px !important;
+    margin-bottom: 0 !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+.rfq-items .row, .web-list-item, .transaction-list-item, .list-group-item {
+    border-bottom: 1px solid var(--pro-border-soft) !important;
+    padding: 15px !important;
+    transition: background-color 0.15s ease !important;
+    background-color: #FFFFFF !important;
+    border-radius: var(--radius-md) !important;
+    margin-bottom: 10px !important;
+    border: 1px solid var(--pro-border-soft) !important;
+}
+
+.rfq-items .row:hover, .web-list-item:hover, .transaction-list-item:hover, .list-group-item:hover {
+    background-color: var(--pro-accent-light) !important;
+    border: 1px solid var(--pro-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+}
+
+.grand-total-row {
+    font-weight: 700 !important;
+    color: var(--pro-primary) !important;
+    font-size: 16px !important;
+    padding-top: 15px !important;
+    border-top: 2px solid var(--pro-border) !important;
+    margin-top: 15px !important;
+    background: #FFFFFF !important;
+    padding: 15px !important;
+    border-radius: var(--radius-md) !important;
+}
+
+/* Web Page Header */
+.page-header {
+    border-bottom: 2px solid var(--pro-accent-light) !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 24px !important;
+}
+
+.page-header h1, .page-header h2, .web-page-header h1 {
+    font-weight: 700 !important;
+    color: var(--pro-primary) !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Supplier Info & Meta text */
+.rfq-supplier, .customer-name {
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    color: var(--pro-text-main) !important;
+}
+
+.text-muted {
+    color: var(--pro-text-muted) !important;
+}
+
+/* Breadcrumbs in web portal */
+.breadcrumb {
+    background-color: transparent !important;
+    padding: 0 !important;
+}
+.breadcrumb li a {
+    color: var(--pro-text-muted) !important;
+    font-weight: 500;
+}
+.breadcrumb li a:hover {
+    color: var(--pro-primary) !important;
+    text-decoration: none;
+}
