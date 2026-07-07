@@ -10,7 +10,7 @@ from custom_ui.custom_ui.ai_chat.config import (
     GEMINI_TOOLS
 )
 from custom_ui.custom_ui.ai_chat.tools import execute_tool
-from custom_ui.custom_ui.ai_chat.budget import check_budget, log_token_usage
+from custom_ui.custom_ui.ai_chat.budget import has_enough_balance, log_token_usage
 
 @frappe.whitelist()
 def chat(messages, approved_action=None):
@@ -37,7 +37,7 @@ def chat(messages, approved_action=None):
             "Run: bench set-config gemini_api_key 'AIza-your-key'"
         )
 
-    budget_ok, budget_msg = check_budget()
+    budget_ok, budget_msg = has_enough_balance()
     if not budget_ok:
         return {"error": budget_msg}
 

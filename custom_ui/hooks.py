@@ -22,3 +22,9 @@ web_include_css = ["/assets/custom_ui/css/minimal_desk_v8.css"]
 # website_theme_scss = "custom_ui/public/scss/website"
 
 fixtures = ["Client Script", "AI Model Rate"]
+
+scheduler_events = {
+    "daily": [
+        "custom_ui.custom_ui.ai_chat.budget.sync_exchange_rate"
+    ]
+}

@@ -6,25 +6,50 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "enable_budget_checking",
-  "monthly_budget",
+  "balance_inr",
+  "total_purchased_inr",
+  "total_consumed_inr",
+  "low_balance_notified",
+  "current_usd_to_inr_rate",
   "alert_email",
-  "currency",
-  "budget_utilized"
+  "currency"
  ],
  "fields": [
   {
-   "default": "1",
-   "fieldname": "enable_budget_checking",
-   "fieldtype": "Check",
-   "label": "Enable Budget Checking"
+   "default": "0.0",
+   "fieldname": "balance_inr",
+   "fieldtype": "Currency",
+   "label": "Wallet Balance",
+   "options": "currency"
   },
   {
-   "default": "100.0",
-   "fieldname": "monthly_budget",
+   "default": "0.0",
+   "fieldname": "total_purchased_inr",
    "fieldtype": "Currency",
-   "label": "Monthly Budget",
-   "options": "currency"
+   "label": "Total Purchased",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "default": "0.0",
+   "fieldname": "total_consumed_inr",
+   "fieldtype": "Currency",
+   "label": "Total Consumed",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "low_balance_notified",
+   "fieldtype": "Check",
+   "label": "Low Balance Notified",
+   "read_only": 1
+  },
+  {
+   "default": "84.0",
+   "fieldname": "current_usd_to_inr_rate",
+   "fieldtype": "Float",
+   "label": "Current USD to INR Rate"
   },
   {
    "fieldname": "alert_email",
@@ -39,20 +64,13 @@
    "label": "Currency",
    "options": "Currency",
    "read_only": 1
-  },
-  {
-   "description": "Visual percentage of the monthly AI budget utilized so far.",
-   "fieldname": "budget_utilized",
-   "fieldtype": "Percent",
-   "label": "AI Budget Utilization",
-   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-06-18 17:19:39.115601",
+ "modified": "2026-06-24 15:15:00.000000",
  "modified_by": "Administrator",
  "module": "Custom UI",
  "name": "AI Settings",

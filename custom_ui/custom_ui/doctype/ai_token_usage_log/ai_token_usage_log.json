@@ -11,9 +11,12 @@
   "prompt_tokens",
   "response_tokens",
   "total_tokens",
-  "total_cost",
-  "request_time",
-  "currency"
+  "raw_cost_usd",
+  "charged_cost_usd",
+  "charged_cost_inr",
+  "markup_percentage_used",
+  "exchange_rate_used",
+  "request_time"
  ],
  "fields": [
   {
@@ -43,30 +46,50 @@
    "label": "Total Tokens"
   },
   {
-   "fieldname": "total_cost",
+   "fieldname": "raw_cost_usd",
+   "fieldtype": "Float",
+   "label": "Raw Cost (USD)",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "charged_cost_usd",
+   "fieldtype": "Float",
+   "label": "Charged Cost (USD)",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "charged_cost_inr",
    "fieldtype": "Currency",
-   "label": "Total Cost",
-   "options": "currency",
-   "precision": "6"
+   "label": "Charged Cost (INR)",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "markup_percentage_used",
+   "fieldtype": "Percent",
+   "label": "Markup Percentage Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exchange_rate_used",
+   "fieldtype": "Float",
+   "label": "Exchange Rate Used",
+   "read_only": 1
   },
   {
    "fieldname": "request_time",
    "fieldtype": "Datetime",
-   "label": "Request Time"
-  },
-  {
-   "default": "INR",
-   "fieldname": "currency",
-   "fieldtype": "Link",
-   "label": "Currency",
-   "options": "Currency",
+   "label": "Request Time",
    "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2026-06-18 17:19:41.380678",
+ "modified": "2026-06-24 15:15:00.000000",
  "modified_by": "Administrator",
  "module": "Custom UI",
  "name": "AI Token Usage Log",
@@ -82,6 +105,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

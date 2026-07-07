@@ -7,9 +7,9 @@
  "engine": "InnoDB",
  "field_order": [
   "model_name",
-  "prompt_token_price",
-  "response_token_price",
-  "currency"
+  "input_cost_per_1m_usd",
+  "output_cost_per_1m_usd",
+  "markup_percentage"
  ],
  "fields": [
   {
@@ -21,34 +21,30 @@
    "unique": 1
   },
   {
-   "fieldname": "prompt_token_price",
-   "fieldtype": "Currency",
+   "fieldname": "input_cost_per_1m_usd",
+   "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Prompt Token Price (per 1M)",
-   "options": "currency",
+   "label": "Input Cost (USD per 1M)",
    "reqd": 1
   },
   {
-   "fieldname": "response_token_price",
-   "fieldtype": "Currency",
+   "fieldname": "output_cost_per_1m_usd",
+   "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Response Token Price (per 1M)",
-   "options": "currency",
+   "label": "Output Cost (USD per 1M)",
    "reqd": 1
   },
   {
-   "default": "INR",
-   "fieldname": "currency",
-   "fieldtype": "Link",
-   "label": "Currency",
-   "options": "Currency",
-   "read_only": 1
+   "default": "0",
+   "fieldname": "markup_percentage",
+   "fieldtype": "Percent",
+   "label": "Markup Percentage"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-18 17:19:40.390383",
+ "modified": "2026-06-24 15:15:00.000000",
  "modified_by": "Administrator",
  "module": "Custom UI",
  "name": "AI Model Rate",

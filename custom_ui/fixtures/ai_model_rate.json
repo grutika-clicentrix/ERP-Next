@@ -1,12 +1,12 @@
 [
  {
-  "currency": "INR",
   "docstatus": 0,
   "doctype": "AI Model Rate",
   "model_name": "gemini-2.5-flash",
-  "modified": "2026-06-18 16:45:10.823917",
+  "modified": "2026-06-24 15:15:00.000000",
   "name": "8n8ii1qus2",
-  "prompt_token_price": 0.3,
-  "response_token_price": 2.5
+  "input_cost_per_1m_usd": 0.15,
+  "output_cost_per_1m_usd": 0.6,
+  "markup_percentage": 20.0
  }
 ]
