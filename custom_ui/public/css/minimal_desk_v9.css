@@ -1,0 +1,275 @@
+/* ================================================================
+   CUSTOM UI PRO v9 — Full-Width V16 Native Redesign
+   Suvarna / Calm-Teal Brand Theme
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&display=swap');
+
+/* ──────────────────────────────────────────────────
+   1. FORCE 100% WIDTH FOR ENTIRE WORKSPACE & CARDS
+   ────────────────────────────────────────────────── */
+:root {
+    --page-max-width: 100% !important;
+    --cu-primary:          #006269;
+    --cu-primary-dk:       #004a4f;
+    --cu-primary-lt:       #007f87;
+    --cu-accent:           #00A3AD;
+    --cu-accent-lt:        #B8E8EB;
+    --cu-accent-xlt:       #E8F7F8;
+    --cu-bg:               #EFF3F6;
+    --cu-surface:          #FFFFFF;
+    --cu-surface-2:        #F5F9FA;
+    --cu-border:           #C2DDE0;
+    --cu-border-soft:      #D8EAEC;
+    --cu-border-strong:    #95C5CA;
+    --cu-text:             #1A3333;
+    --cu-text-sub:         #2E4F4F;
+    --cu-text-muted:       #4D7272;
+    --cu-text-faint:       #7BA8A8;
+
+    /* Shadows — teal-tinted */
+    --cu-sh-xs:  0 1px 2px rgba(0,98,105,.06);
+    --cu-sh-sm:  0 2px 6px -1px rgba(0,98,105,.10), 0 1px 2px -1px rgba(0,98,105,.06);
+    --cu-sh-md:  0 4px 14px -2px rgba(0,98,105,.12), 0 2px 4px -2px rgba(0,98,105,.06);
+    --cu-sh-lg:  0 10px 30px -5px rgba(0,98,105,.14), 0 4px 8px -4px rgba(0,98,105,.07);
+    --cu-sh-xl:  0 20px 44px -8px rgba(0,98,105,.18), 0 8px 16px -6px rgba(0,98,105,.08);
+
+    /* Radii */
+    --cu-r-xs:   4px;
+    --cu-r-sm:   7px;
+    --cu-r-md:   11px;
+    --cu-r-lg:   15px;
+    --cu-r-xl:   20px;
+}
+
+/* Force container layout elements to stretch to full screen width */
+body:not(.full-width) [data-page-route="Workspaces"] .layout-main,
+body:not(.full-width) .layout-main,
+body .layout-main,
+.layout-main,
+.layout-main-section-wrapper,
+.layout-main-section,
+.editor-js-container,
+.codex-editor,
+.codex-editor__redactor {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Ensure EditorJS content block inner wrappers occupy the full width of their grid block */
+.ce-block__content {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Let the page workspace skeleton expand fully */
+.workspace-skeleton {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+    background-color: var(--cu-bg) !important;
+    color: var(--cu-text) !important;
+    letter-spacing: -0.012em !important;
+}
+
+html { background-color: var(--cu-bg) !important; }
+
+/* ──────────────────────────────────────────────────
+   2. GLOBAL NAVBAR (V16 Desk top header)
+   ────────────────────────────────────────────────── */
+.navbar {
+    background: #1A3333 !important;
+    border-bottom: 1px solid rgba(0, 163, 173, 0.25) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.14) !important;
+}
+.navbar .nav-link,
+.navbar .navbar-brand,
+.navbar .nav-item a,
+.navbar .nav-item span {
+    color: rgba(255,255,255,.88) !important;
+}
+.navbar svg,
+.navbar use,
+.navbar .icon {
+    fill: rgba(255,255,255,.88) !important;
+    stroke: rgba(255,255,255,.88) !important;
+    color: rgba(255,255,255,.88) !important;
+}
+
+/* ──────────────────────────────────────────────────
+   3. BREADCRUMBS & PER-PAGE HEADER (.page-head)
+   ────────────────────────────────────────────────── */
+.page-head {
+    background: var(--cu-surface) !important;
+    border-bottom: 1px solid var(--cu-border-soft) !important;
+    box-shadow: var(--cu-sh-xs) !important;
+    z-index: 6 !important;
+}
+.page-head .page-head-content {
+    padding: 8px 20px !important;
+}
+.page-head .title-text,
+.page-head .page-title h3,
+.page-head h3 {
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    color: var(--cu-text) !important;
+}
+
+/* ──────────────────────────────────────────────────
+   4. SIDEBAR STYLING
+   ────────────────────────────────────────────────── */
+.body-sidebar-container {
+    border-right: 1px solid var(--cu-border) !important;
+    box-shadow: 2px 0 10px -4px rgba(0,98,105,.12) !important;
+}
+.body-sidebar {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F0F7F8 100%) !important;
+}
+.standard-sidebar-item .item-anchor {
+    border-radius: 7px !important;
+    color: var(--cu-text-sub) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+.standard-sidebar-item:not(.active-sidebar):has(a:not(.section-break)):hover .item-anchor {
+    background: rgba(0,98,105,.07) !important;
+    color: var(--cu-primary) !important;
+}
+
+/* Active item style */
+.active-sidebar {
+    background: linear-gradient(135deg, var(--cu-primary) 0%, var(--cu-accent) 100%) !important;
+    box-shadow: 0 3px 10px -2px rgba(0,163,173,.32) !important;
+    border-radius: 8px !important;
+}
+.active-sidebar .item-anchor,
+.active-sidebar .sidebar-item-label,
+.active-sidebar .sidebar-item-icon svg,
+.active-sidebar .sidebar-item-icon use {
+    color: #fff !important;
+    fill: #fff !important;
+    stroke: #fff !important;
+}
+
+/* ──────────────────────────────────────────────────
+   5. WORKSPACE CONTAINER & WIDGET CARDS
+   ────────────────────────────────────────────────── */
+[data-page-route="Workspaces"] .layout-main-section {
+    padding: 20px 24px !important;
+    background: var(--cu-bg) !important;
+}
+
+/* Make widget section groups occupy full width */
+.widget-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 24px !important;
+}
+
+/* Widget Group Title */
+.widget-group .widget-group-head,
+.widget-group-title,
+.workspace-section-title {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .08em !important;
+    color: var(--cu-text-faint) !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid var(--cu-border-soft) !important;
+    width: 100% !important;
+}
+
+/* The actual Card boxes (links, shortcuts, charts) */
+.links-widget-box,
+.shortcut-widget-box,
+.number-widget-box,
+.dashboard-widget-box,
+.onboarding-widget-box,
+.chart-widget-box,
+.quick-list-widget-box,
+.custom-block-widget-box {
+    background: var(--cu-surface) !important;
+    border: 1px solid var(--cu-border-soft) !important;
+    border-top: 3px solid var(--cu-primary) !important;
+    border-radius: var(--cu-r-lg) !important;
+    box-shadow: var(--cu-sh-sm) !important;
+    padding: 20px 22px !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    transition: box-shadow .25s ease, transform .22s ease !important;
+}
+.links-widget-box:hover,
+.shortcut-widget-box:hover,
+.number-widget-box:hover,
+.dashboard-widget-box:hover,
+.chart-widget-box:hover {
+    box-shadow: var(--cu-sh-lg) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Widget Inner Title */
+.widget-title,
+.widget-head .widget-label .widget-title {
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+    color: var(--cu-text) !important;
+    border-bottom: 2px solid var(--cu-accent-lt) !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 14px !important;
+}
+
+/* Links inside workspace widgets */
+.widget-link-item,
+.link-item {
+    border-radius: var(--cu-r-sm) !important;
+    padding: 7px 10px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--cu-text-sub) !important;
+    text-decoration: none !important;
+    transition: background .12s, color .12s !important;
+}
+.widget-link-item:hover,
+.link-item:hover {
+    background: var(--cu-accent-xlt) !important;
+    color: var(--cu-primary) !important;
+    text-decoration: none !important;
+}
+
+/* ──────────────────────────────────────────────────
+   6. FORMS / LIST VIEWS
+   ────────────────────────────────────────────────── */
+.form-container {
+    background: var(--cu-surface) !important;
+    border-radius: var(--cu-r-lg) !important;
+    box-shadow: var(--cu-sh-sm) !important;
+    border: 1px solid var(--cu-border-soft) !important;
+    margin: 16px 20px !important;
+}
+.frappe-list {
+    background: var(--cu-surface) !important;
+    border-radius: var(--cu-r-lg) !important;
+    border: 1px solid var(--cu-border-soft) !important;
+    box-shadow: var(--cu-sh-sm) !important;
+    overflow: hidden !important;
+    margin: 16px 20px !important;
+    width: calc(100% - 40px) !important;
+}
+.list-row:hover,
+.list-row-container:hover {
+    background: var(--cu-accent-xlt) !important;
+}
